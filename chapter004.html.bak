@@ -1,0 +1,2158 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>云计算 第四章</title>
+
+    <link rel="stylesheet" href="css/include.css" media="all">
+
+    <!-- pre-libraries -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+
+    <script src="js/define.js"></script>
+  </head>
+  <body>
+    <div class="reveal pattern--random">
+      <div class="slides">
+
+        <script>
+          courseName = "云计算";
+          chapterName = "第四章 分布式技术";
+          toc = [
+            {name: "分布式技术概述", desc: ""},
+            {name: "Redis", desc: ""},
+            {name: "Redis Session分离", desc: ""},
+            {name: "一致性哈希", desc: ""},
+            {name: "ZooKeeper", desc: ""},
+            {name: "分布式业务分离", desc: ""},
+            {name: "分布式文件存储", desc: ""},
+          ];
+        </script>
+
+        <section class="cover" id="cover"></section>
+
+        <section class="toc color--midnight" id="toc"></section>
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="what-is-distribution" data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是分布式？</h1>
+            </div>
+            <div class="content full-size" style="display: flex; flex-direction: column;">
+              <p class="fragment r-fit-text">究竟什么是分布式？</p>
+              <p class="fragment">分布式系统定义很多，但没有一个定义是完整的和权威的。大部分的定义都试图从不同的角度去描述分布式系统的各个方面的特性。</p>
+              <div class="r-stack full-size">
+                <div class="fragment fade-out collapse " data-fragment-id="group1" data-fragment-after="group1-last">
+                  <blockquote class="fragment" data-fragment-id="group1-last">
+                    分布式系统中，一组独立的计算机展现给用户的是一个系统来完成一个统一的工作，但是系统内部可以动态的分配任务。分散的物理和逻辑资源通过计算机网络实现信息的交换。
+                  </blockquote>
+                </div>
+                <div class="fragment fade-out collapse " data-fragment-id="group2" data-fragment-after="group2-last">
+                  <blockquote class="fragment" data-fragment-with="group1" data-fragment-id="group2-last">
+                    Distribued system is a collection of independent computers that appear to the users of the system as a single computer.  --Andrew Tanenbaum
+                  </blockquote>
+                </div>
+                <div class="fragment fade-out collapse " data-fragment-id="group3" data-fragment-after="group3-last">
+                  <blockquote class="fragment" data-fragment-with="group2" data-fragment-id="group3-last">
+                    Distributed system is several computers doing something together. Thus, a distributed system has three primary characteristics: multiple computers, interconnections, and shared state.  --Michael Schroeder
+                  </blockquote>
+                </div>
+                <div>
+                  <blockquote class="fragment" data-fragment-with="group3">
+                    Distributed system is a collection of entities, each of which is autonomous, programmable, asynchronous and failure-prone, and which communicate through an unreliable communication medium.  --Indranil Gupta
+                  </blockquote>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- what-is-distribution -->
+
+        <section id="distributed-system-example">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">举例：分布式系统</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">例如：如要计算1+2+……+100值。</p>
+              <p class="fragment">可以使用一台服务器进行<b>顺序</b>计算</p>
+              <p class="fragment">也可以使用2台服务器<b>并行</b>计算，例如服务器1执行1到50的相加计算，服务器2执行51到100的相加计算，然后再进行汇总。</p>
+            </div>
+          </div>
+        </section> <!-- distributed-system-example -->
+
+        <section id="distributed-system-features" data-auto-animate>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">分布式系统的特点</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                分布式系统的特点有很多，这里我们主要介绍其中几个：
+              </p>
+              <ul>
+                <li class="fragment">计算速度加快</li>
+                <li class="fragment">对等性</li>
+                <li class="fragment">并发性</li>
+                <li class="fragment">缺乏全局时钟</li>
+                <li class="fragment">故障总会发生</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- distributed-system-features -->
+
+        <section id="distributed-system-features2" data-fragment-order data-auto-animate>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">分布式系统的特点</h1>
+            </div>
+            <div class="content">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group1">
+                  计算速度加快
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group2" data-fragment-with="group1">
+                  对等性
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group3" data-fragment-with="group2">
+                  并发性
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group4" data-fragment-with="group3">
+                  缺乏全局时钟
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group5" data-fragment-with="group4">
+                  故障总会发生
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack" style="margin-top: 50px;">
+                <div class="fragment full-size fade-out" data-fragment-id="group1" data-fragment-after="group1-last">
+                  <p class="fragment">
+                    一台服务器计算100个数的话需要用10个小时。
+                  </p>
+                  <p class="fragment" data-fragment-id="group1-last">
+                  如果分为两台计算机，每台计算50个数，用的时间总共是5个小时，大大提高了计算的速度。
+                  </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="group2" data-fragment-after="group2-last">
+                  <p class="fragment">分布式系统中的计算机没有主/从之分，既没有控制整个系统的主机，也没有被控制的从机，组成分布式系统的所有计算机节点都是对等的。</p>
+                  <p class="fragment">副本（Replica）是分布式系统最常见的概念之一，指的是分布式系统对数据和服务提供的一种冗余方式。</p>
+                  <p class="fragment" data-fragment-id="group2-last">
+                  在常见的分布式系统中，为了对外提供高可用的服务，我们往往会对数据和服务进行副本处理。
+                  </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="group3" data-fragment-after="group3-last">
+                  <p class="fragment" data-fragment-id="group3-last">
+                  在一个计算机网络中，程序运行过程中的并发性操作，是非常常见的行为，例如同一个分布式系统中的多个节点，可能会并发地操作一些共享的资源，诸如数据库或分布式存储等，如何准确并高效地协调分布式并发操作也成为了分布式系统架构与设计中最大的挑战之一。
+                  </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="group4" data-fragment-after="group4-last">
+                  <p class="fragment">
+                  一个典型的分布式系统是由一系列在空间上随意分布的多个进程组成的，具有明显的分布性，这些进程之间通过交换消息来进行相互通信。
+                  </p>
+                  <p class="fragment" data-fragment-id="group4-last">
+                  因此，在分布式系统中，很难定义两个事件究竟谁先谁后，原因就是因为分布式系统缺乏一个全局的时钟序列控制。
+                  </p>
+                </div>
+                <div>
+                  <p class="fragment">组成分布式系统的所有计算机，都有可能发生任何形式的故障。</p>
+                  <p class="fragment">一个被大量工程实践所检验过的黄金定理是：任何在设计阶段考虑到的异常情况，一定会在系统实际运行时发生，并且，在系统实际运行过程中还会遇到很多在设计时未能考虑到的异常故障。</p>
+                  <p class="fragment">
+                  所以，除非需求指标允许，在系统设计时不能放过任何异常情况。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- distributed-system-features2 -->
+
+        <section id="distributed-cluster-diff" data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">分布式与集群的区别</h1>
+            </div>
+            <div class="content">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group1">
+                    原理上
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group2" data-fragment-with="group1">
+                    容错能力上
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack" style="margin-top: 50px;">
+                <div class="fragment full-size fade-out" style="display: flex; column-gap: 50px;" data-fragment-id="group1" data-fragment-after="group1-last">
+                  <p class="fragment">
+                    集群中每台服务器，可以执行的任务是一样的，相同的时间内，我们可以通过增加服务器来增加访问的人数。也就是说集群是将几台服务器集合到一起，来实现同一业务。
+                  </p>
+                  <p class="fragment" data-fragment-id="group1-last">
+                    分布式，是按照一定的算法将任务分配给多台服务器，提高的是执行任务的时间。也就是说分布式是将不同的业务分不到不同的地方。
+                  </p>
+                </div>
+                <div style="display: flex; column-gap: 50px;">
+                  <p class="fragment">
+                    集群服务器中如果有故障的服务器，可以自动隔离，问题解决后，可以自动恢复。
+                  </p>
+                  <p class="fragment">
+                    而分布式服务器，一旦出现问题，任务就无法正常执行完成。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- distributed-cluster-diff -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="nosql-basics">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">NoSQL概述</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">NoSQL，泛指非关系型的数据库，NoSQL即Not-Only SQL，它可以作为关系型数据库的良好补充。</p>
+              <p class="fragment">随着互联网web2.0网站的兴起，传统的关系数据库在应付web2.0网站，特别是超大规模和高并发的SNS类型的web2.0纯动态网站已经显得力不从心，暴露了很多难以克服的问题，而非关系型的数据库则由于其本身的特点得到了非常迅速的发展。</p>
+              <p class="fragment">NoSQL数据库的产生就是为了解决大规模数据集合多重数据种类带来的挑战，尤其是大数据应用难题。</p>
+            </div>
+          </div>
+        </section> <!-- no-sql-basics -->
+
+        <section id="nosql-categories" data-auto-animate>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">NoSQL数据库的四大分类</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                NoSQL数据库有很多种不同的分类方式，业界比较公认的类别有四大类：
+              </p>
+              <ul>
+                <li class="fragment">键值(Key-Value)存储数据库</li>
+                <li class="fragment">列存储数据库</li>
+                <li class="fragment">文档型数据库</li>
+                <li class="fragment">图形(Graph)数据库</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- nosql-categories -->
+
+        <section id="nosql-categories2" data-auto-animate data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">NoSQL数据库的四大分类</h1>
+            </div>
+            <div class="content">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group1">
+键值(Key-Value)存储数据库
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group2" data-fragment-with="group1">
+列存储数据库
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group3" data-fragment-with="group2">
+文档型数据库
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group4" data-fragment-with="group3">
+图形(Graph)数据库
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack full-size" style="margin-top: 50px;">
+                <div class="fragment full-size fade-out" data-fragment-id="group1" data-fragment-after="group1-last">
+                  <ul class="full-wdith" style="margin-top: 0;">
+                    <li class="fragment">典型应用： 内容缓存，主要用于处理大量数据的高访问负载。 </li>
+                    <li class="fragment">数据模型： 一系列键值对</li>
+                    <li class="fragment">优势： 快速查询</li>
+                    <li class="fragment">劣势： 存储的数据缺少结构化</li>
+                    <li class="fragment">相关产品： Tokyo Cabinet/Tyrant、Redis、Voldemort、Berkeley DB</li>
+                  </ul>
+                  <div class="r-stack fragment" style="margin-top: 0;" data-fragment-id="group1-last">
+                    <img class="animated slideInLeft" src="img/chapter004/key-value.png">
+                  </div>
+                </div>
+                <div class="fragment r-stack full-size fade-out" data-fragment-id="group2" data-fragment-after="group2-last">
+                  <ul class="full-width" style="margin-top: 0;">
+                    <li class="fragment">典型应用：分布式的文件系统</li>
+                    <li class="fragment">数据模型：以列簇式存储，将同一列数据存在一起</li>
+                    <li class="fragment">优势：查找速度快，可扩展性强，更容易进行分布式扩展</li>
+                    <li class="fragment">劣势：功能相对局限</li>
+                    <li class="fragment">相关产品：Cassandra, HBase, Riak</li>
+                  </ul>
+                  <div class="r-stack fragment" style="margin-top: 0;" data-fragment-id="group2-last">
+                    <img class="animated slideInLeft" src="img/chapter004/column.png">
+                  </div>
+                </div>
+                <div class="fragment r-stack full-size fade-out" data-fragment-id="group3" data-fragment-after="group3-last">
+                  <ul style="margin-top: 0;">
+                    <li class="fragment">典型应用：Web应用（与Key-Value类似，Value是结构化的）</li>
+                    <li class="fragment">数据模型： 一系列键值对</li>
+                    <li class="fragment">优势：数据结构要求不严格</li>
+                    <li class="fragment">劣势： 查询性能不高，而且缺乏统一的查询语法</li>
+                    <li class="fragment">相关产品：CouchDB、MongoDB</li>
+                  </ul>
+                  <div class="r-stack fragment" style="margin-top: 0;" data-fragment-id="group3-last">
+                    <img class="animated slideInLeft" src="img/chapter004/document.png">
+                  </div>
+                </div>
+                <div class="r-stack full-size">
+                  <ul style="margin-top: 0;">
+                    <li class="fragment">典型应用：社交网络</li>
+                    <li class="fragment">数据模型：图结构</li>
+                    <li class="fragment">优势：利用图结构相关算法。</li>
+                    <li class="fragment">劣势：需要对整个图做计算才能得出结果，不容易做分布式的集群方案。</li>
+                    <li class="fragment">相关数据库：Neo4J、InfoGrid、Infinite Graph</li>
+                  </ul>
+                  <div class="r-stack fragment" style="margin-top: 0;">
+                    <img class="animated slideInLeft" src="img/chapter004/graph.png">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- nosql-categories2 -->
+
+        <section id="redis-basics">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Redis简介</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">Remote Dictionary Server(Redis)，即远程字典服务器。</p>
+              <p class="fragment">Redis是ANSI C语言编写，支持网络，基于内存亦可持久化的日志型的，Key-Value数据库。</p>
+              <p class="fragment">Redis是开源的且遵守BSD协议。</p>
+              <p class="fragment">Redis的代码量比较小(?)方便程序员吃透其代码原理。</p>
+              <p class="fragment"><b>注意</b>：学习Redis如果只是学怎么用，你就完了。</p>
+              <p class="fragment">必须阅读源码，学习原理！！</p>
+            </div>
+          </div>
+        </section> <!-- redis-basics -->
+
+        <section id="redis-history">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Redis的历史</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">2008年，意大利的一家创业公司Merzia推出了一款基于MySQL的网站实时统计系统LLOOGG，然而该公司的创始人 Salvatore Sanfilippo（antirez）对MySQL的性能感到失望。</p>
+              <p class="fragment">2009年Salvatore开发完成了Redis。同年，Salvatore Sanfilippo将Redis开源发布，并开始和另一名主要的代码贡献者Pieter Noordhuis一起继续进行Redis的维护。</p>
+              <p class="fragment">Hacker News在2012年发布了一份数据库的使用情况调查显示有近12%的公司在使用Redis。</p>
+              <p class="fragment">2010年VMware开始赞助Redis的开发，两名维护者也加入VMware，全职开发Redis。</p>
+              <p class="fragment">从2013年开始，Redis的开发由Pivotal赞助。</p>
+              <p class="fragment">2020年9月，Redis创始人Salvatore宣布离开Redis团队，但并不影响Redis的开发。（ http://antirez.com/news/133 ）</p>
+            </div>
+          </div>
+        </section> <!-- redis-history -->
+
+        <section id="redis-important-versions" data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Redis的重大历史版本</h1>
+            </div>
+            <div class="content">
+              <p>
+                和Linux内核版本非常类似，版本号第二位如果是奇数，则为非稳定版本（例如2.7、2.9、3.1），如果是偶数，则为稳定版本（例如2.6、2.8、3.0、3.2）
+              </p>
+              <div style="display: flex; column-gap: 50px;">
+                <ul class="fragment" style="margin: 0 0px; list-style: none; padding-right: 20px; border-right: 1px solid black;">
+                  <li>
+                    <span class="fragment dummy red" data-fragment-group="group1">
+                      2.6
+                    </span>
+                  </li>
+                  <li>
+                    <span class="fragment dummy red" data-fragment-group="group2" data-fragment-with="group1">
+                      2.8
+                    </span>
+                  </li>
+                  <li>
+                    <span class="fragment dummy red" data-fragment-group="group3" data-fragment-with="group2">
+                      3.0
+                    </span>
+                  </li>
+                  <li>
+                    <span class="fragment dummy red" data-fragment-group="group4" data-fragment-with="group3">
+                      3.2
+                    </span>
+                  </li>
+                  <li>
+                    <span class="fragment dummy red" data-fragment-group="group5" data-fragment-with="group4">
+                      4.0
+                    </span>
+                  </li>
+                  <li>
+                    <span class="fragment dummy red" data-fragment-group="group6" data-fragment-with="group5">
+                      5.0
+                    </span>
+                  </li>
+                  <li>
+                    <span class="fragment dummy red" data-fragment-group="group7" data-fragment-with="group6">
+                      6.0
+                    </span>
+                  </li>
+                </ul>
+                <div class="r-stack" style="margin-top: 50px;">
+                  <div class="fragment full-size fade-out" data-fragment-id="group1" data-fragment-after="group1-last">
+                    <p class="fragment">主从结构，从节点只读</p>
+                    <p class="fragment" data-fragment-id="group1-last">Lua脚本</p>
+                  </div>
+                  <div class="fragment full-size fade-out" data-fragment-id="group2" data-fragment-after="group2-last">
+                    <p class="fragment" data-fragment-id="group2-last">
+                      从节点部分复制
+                    </p>
+                  </div>
+                  <div class="fragment full-size fade-out" data-fragment-id="group3" data-fragment-after="group3-last">
+                    <p class="fragment" data-fragment-id="group3-last">
+                      分布式
+                    </p>
+                  </div>
+                  <div class="fragment full-size fade-out" data-fragment-id="group4" data-fragment-after="group4-last">
+                    <p class="fragment" data-fragment-id="group4-last">
+                      性能增强
+                    </p>
+                  </div>
+                  <div class="fragment full-size fade-out" data-fragment-id="group5" data-fragment-after="group5-last">
+                    <p class="fragment">
+                      模块系统
+                    </p>
+                    <p class="fragment" data-fragment-id="group5-last">
+                      支持Docker
+                    </p>
+                  </div>
+                  <div class="fragment full-size fade-out" data-fragment-id="group6" data-fragment-after="group6-last">
+                    <p class="fragment">
+                      stream数据类型
+                    </p>
+                    <p class="fragment" data-fragment-id="group6-last">
+                      C实现集群
+                    </p>
+                  </div>
+                  <div class="full-size">
+                    <p class="fragment">
+                      多线程支持
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- redis-important-versions -->
+
+        <section id="install-redis-dependency">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">安装依赖库</h1>
+            </div>
+            <div class="content">
+ <p class="fragment">
+   在安装Redis之前可能需要安装依赖：             
+ </p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+yum -y install cpp
+yum -y install binutils
+yum -y install glibc
+yum -y install glibc-kernheaders
+yum -y install glibc-common
+yum -y install glibc-devel
+yum -y install gcc (版本必须大于5)
+yum -y install make
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- install-redis-dependency -->
+
+        <section id="install-redis">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">安装和体验Redis</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                从发行版仓库中安装（版本太低）：
+              </p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+yum install y redis
+                </script>
+              </code></pre>
+              <p class="fragment">
+                从源代码编译安装：
+              </p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+wget http://download.redis.io/releases/redis-6.0.6.tar.gz
+tar xzf redis-6.0.6.tar.gz
+cd redis-6.0.6
+make
+make PREFIX=/usr/local/redis install
+                </script>
+              </code></pre>
+              <p class="fragment">试用redis</p>
+              <p class="fragment">https://try.redis.io/</p>
+            </div>
+          </div>
+        </section> <!-- install-redis -->
+
+        <section id="config-redis">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Redis的配置</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">从仓库安装，配置文件位于/etc下</p>
+              <p class="fragment">从源代码安装，配置文件位于源代码路径中</p>
+              <p class="fragment">为了方便，可以将配置文件复制到/etc下</p>
+              <p class="fragment">可以将Redis的启动更改为服务，方便统一管理</p>
+            </div>
+          </div>
+        </section> <!-- config-redis -->
+
+        <section id="redis-basic-command">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Redis基础命令</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                获得符合规则的键名称
+              </p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                            <script type="text/template">
+            keys 表达式（?,* ,[],\?）
+                            </script>
+                          </code></pre>
+              <p class="fragment">
+                判断一个键是否存在
+              </p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                            <script type="text/template">
+            exists key
+                            </script>
+                          </code></pre>
+              <p class="fragment">
+                删除键
+              </p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                            <script type="text/template">
+            del key
+            del key1 key2
+                            </script>
+                          </code></pre>
+              <p class="fragment">
+                批量删除
+              </p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                            <script type="text/template">
+            redis-cli del `redis-cli keys "key*"`
+                            </script>
+                          </code></pre>
+              <p class="fragment">获得键值的数据类型</p>
+
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                <script type="text/template">
+type key
+                </script>
+              </code></pre>
+              <p class="fragment">返回值可能是这五种类型（string,hash,list,set,zset）</p>
+              <p class="fragment"><b>注意</b>：redis不区分命令大小写，区分键名大小写</p>
+              <ul class="full-width" style="columns: 2;">
+                <li class="fragment">help @<group>：获取组中的所有命令</li>
+                <li class="fragment">help <command>：获取命令帮助</li>
+                <li class="fragment">help <tab>：自动补全提示</li>
+                <li class="fragment">quit：退出</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- redis-basic-command -->
+
+        <section id="redis-config">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Redis Config命令</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                使用config set可以动态设置参数信息，服务器重启之后就失效了。
+              </p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                            <script type="text/template">
+            config set appendonly yes
+            config set save "90 1 30 10 60 100"
+                            </script>
+                          </code></pre>
+              <p class="fragment">
+                使用config get可以查看所有可以使用config set命令设置的参数
+              </p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                            <script type="text/template">
+            config get *
+                            </script>
+                          </code></pre>
+              <p class="fragment">
+                使用config rewrite命令对启动 Redis 服务器时所指定的 redis.conf 文件进行改写(Redis 2.8 及以上版本)，主要是把使用config set动态指定的命令保存到配置文件中。
+              </p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                            <script type="text/template">
+            config rewrite
+                            </script>
+                          </code></pre>
+              <p class="fragment"><b>注意</b>：config rewrite命令对 redis.conf 文件的重写是原子性的， 并且是一致的</p>
+              <p class="fragment">如果重写出错或重写期间服务器崩溃，那么重写失败，原有 redis.conf 文件不会被修改。 如果重写成功， 那么 redis.conf 文件为重写后的新文件。</p>
+            </div>
+          </div>
+        </section> <!-- redis-config -->
+
+        <section id="redis-install-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：编译安装Redis并配置Redis服务</h1>
+            </div>
+            <div class="content">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "install-redis",
+                  url: "video/chapter004/安装Redis_batch.mp4",
+                  pauses: [0, 3.180499, 14.698534, 21.681251, 28.005284, 35.80503, 43.648694, 46.087134, 50.272359, 61.276914, 65.488669, 73.763737, 86.401038, 95.378504, 101.021244, 121.985989, 134.195466, 148.421275, 162.490382, 192.747304, 198.834438, 207.353619, 218.601174, 228.13825, 267.599774, 273.53692, 280.320557, 296.450738, 311.25426, 322.454699, 358.798, 379.170814, 404.32278, 405.512328, 413.229788, 429.138716, 437.623669, 446.881424, 453.544587]
+                });
+              </script>
+              <div id="install-redis-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- redis-install-demo -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="ip-hash-flaws" data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">思考：IP Hash实现session保持的缺点</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack">
+                <div>
+                  <p class="fragment"><b>思考</b>：ip_hash方式实现session保持有什么缺点吗？</p>
+                  <p class="fragment">怎么办？</p>
+                  <p class="fragment">解决方法：使用session共享</p>
+                  <ul>
+                    <li class="fragment">
+                      持久化session到数据库，即使用数据库来储存session。
+                      <div class="fragment fade-out collapse full-size" data-fragment-after="group1-last">
+                        <p class="fragment">数据库正好是我们普遍使用的公共储存空间，一举两得，推荐使用mysql数据库，轻量并且性能良好。</p>
+                        <p class="fragment">优点：就地取材，符合大多数人的思维，使用简单，不需要太多额外编码工作 </p>
+                        <p class="fragment" data-fragment-id="group1-last">
+                          缺点：对mysql性能要求较高，访问mysql需要从连接池中获取连接，又因为大部分请求均需要进行登录鉴权，所以操作数据库非常频繁，当用户量达到一定程度之后，极易造成数据库瓶颈，不适用于处理高并发的情况。
+                        </p>
+                      </div>
+                    </li>
+                    <li class="fragment">
+                      <span>使用Redis共享session。</span>
+                      <div class="fragment fade-out collapse full-size" data-fragment-after="group2-last">
+                        <p class="fragment">
+                          Redis是一个key-value的储存系统。可以简单的将其理解为一个数据库，与传统数据库的区别是，它将数据储存于内存中，并自带有内存到硬盘的序列化策略，即按策略将内存中的数据同步到磁盘，避免数据丢失，是目前比较流行的解决方案。
+                        </p>
+                        <p class="fragment">
+                          优点：无需增加数据库的压力，因为数据存储于内存中，所以读取非常快，高性能，并能处理多种类型的数据。
+                        </p>
+                        <p class="fragment" data-fragment-id="group2-last">
+                          缺点：额外增加一些编码，以便操作redis。
+                        </p>
+                      </div>
+                    </li>
+                    <li class="fragment">
+                      使用memcache同步session，
+                      <div class="fragment fade-out collapse full-size" data-fragment-after="group3-last">
+                        <p class="fragment">
+                          memcache可以实现分布式，可将服务器中的内存组合起来，形成一个“内存池”，以此充当公共空间，保存session信息。
+                        </p>
+                        <p class="fragment">
+                          优点：数据储存在内存中，读取非常快，性能好；
+                        </p>
+                        <p class="fragment" data-fragment-id="group3-last">
+                          缺点：memcache把内存分成很多种规格的存储块，有大有小，不能完全利用内存，会产生内存碎片，浪费资源，如果储存块不足，还会产生内存溢出。
+                        </p>
+                      </div>
+                    </li>
+                    <li class="fragment">
+                      通过脚本或守护进程在多台服务器之间同步session。
+                      <div class="fragment fade-out collapse full-size" data-fragment-after="group4-last">
+                        <p class="fragment">
+                          优点：实现了session共享；
+                        </p>
+                        <p class="fragment" data-fragment-id="group4-last">
+                          缺点：对个人来说实现较为复杂，速度不稳定，有延时性，取决于现实中服务运行状态，偶然性较大，如果用于访问过快，可能出现session还没同步成功的情况。
+                        </p>
+                      </div>
+                    </li>
+                    <li class="fragment">
+                      使用NFS共享session。
+                      <div class="fragment fade-out collapse full-size" data-fragment-after="group5-last">
+                        <p class="fragment">
+                          NFS是Network File
+                          Server共享服务器的简称，最早由Sun公司为解决Unix网络主机间的目录共享而研发。选择一台公共的NFS做共享服务器，储存所有session数据，每台服务器所需的session均从此处获取。
+                        </p>
+                        <p class="fragment">
+                          优点：较好的实现了session共享；
+                        </p>
+                        <p class="fragment" data-fragment-id="group5-last">
+                          缺点：成本较高，对于个人来说难以实现。NFS依托于复杂的安全机制和文件系统，因此并发效率不高。
+                        </p>
+                      </div>
+                    </li>
+                    <li class="fragment">
+                      使用Cookie共享session。
+                      <div class="full-size">
+                        <p class="fragment">
+                          如果将session中的内容存放在cookie中，则省略了服务器保存session的过程，后台只需要根据cookie中约定的标识进行鉴权校验即可。
+                        </p>
+                        <p class="fragment">
+                          优点：完美的贯彻分布式的理念，将每个用户都利用起来，无需耗费额外的服务器资源；
+                        </p>
+                        <p class="fragment">
+                          缺点：受http协议头长度限制，cookie中存储的信息不宜过多；
+                          为了保持cookie全局有效，会占用一些服务器的带宽；
+                          鉴权信息全存储于cookie中，cookie存在于客户端，其安全性比其他方案差。
+                        </p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="r-stack fragment wframe">
+                  <img class="animated slideInLeft" src="img/chapter004/redis-session-topology.png">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- ip-hash-flaws -->
+
+        <section id="java-redis-dependency">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Java项目依赖Redis</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                对于普通项目，可以添加依赖：
+              </p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                            <script type="text/template">
+            compile(‘redis.clients.jedis’)
+            或者
+            compile(‘io.lettuce.lettue-core’)
+                            </script>
+                          </code></pre>
+              <p class="fragment">
+                对于SpringBoot项目，直接添加：
+              </p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                            <script type="text/template">
+            compile('org.springframework.boot:spring-boot-starter-data-redis')
+                            </script>
+                          </code></pre>
+            </div>
+          </div>
+        </section> <!-- java-redis-dependency -->
+
+        <section id="spring-session-redis">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">SpringBoot项目配置Redis Session共享</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  在build.gradle中添加依赖：
+</p>
+              <pre class="fragment"><code class="lang-gradle" data-line-numbers="">
+                <script type="text/template">
+compile('org.springframework.boot:spring-boot-starter-data-redis')
+compile('org.springframework.session:spring-session-data-redis’)
+                </script>
+              </code></pre>
+<p class="fragment">
+  在application.yml中添加配置：
+</p>
+              <pre class="fragment"><code class="lang-yaml" data-line-numbers="">
+                <script type="text/template">
+spring:
+  redis:
+    host: localhost
+    port: 6379
+    password:   
+  session:
+    store-type: redis
+    timeout: PT10M
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- spring-session-redis -->
+
+        <section id="spring-session-redis-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：使用Redis实现Session共享</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "redis-session",
+                  url: "video/chapter004/RedisSession共享_batch.mp4",
+                  pauses: [0, 13.972366, 32.187604, 46.21078, 49.935217, 59.302196, 89.580863, 100.488275, 143.915719, 152.145838, 200.588969, 257.052333, 305.955672, 335.31572, 347.661927, 355.426091, 399.751, 420.313406, 434.942, 481.627446, 540.516, 606.661926]
+                });
+              </script>
+              <div id="redis-session-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- spring-session-redis-demo -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="what-is-hash">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是哈希</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                Hash也称散列、哈希，对应的英文都是Hash。基本原理就是把任意长度的输入，通过Hash算法变成固定长度的输出。这个映射的规则就是对应的Hash算法，而原始数据映射后的二进制串就是哈希值。
+              </p>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter004/hash.png">
+              </div>
+            </div>
+          </div>
+        </section> <!--  -->
+
+        <section id="cache-load-balance">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">以缓存负载均衡为例</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">缓存是存储在计算机上的一个原始数据复制集，介于数据访问者与数据源之间的一种高速存储，当数据进行读取时，直接从高速存储中获取，如果可以获取到结果时则无需访问数据库直接返回缓存中的内容；</p>
+              <p class="fragment">如果缓存未命中时，再从数据库中获取，一方面可以提高数据的读取速度，另一方面还可以降低数据库的性能消耗，提高用户交互体验的同时对系统的稳定性也有了一定的保障。</p>
+              <p class="fragment">
+                没有缓存对系统的加速和阻挡大量的请求直接落到系统的底层，系统是很难撑住高并发的冲击，所以分布式系统中缓存的设计是很重要的一环。
+              </p>
+              <p class="fragment">分布式缓存最常见的方式就是通过哈希值去查找对应的数据缓存在哪个具体的服务器上。</p>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter004/cache-load-balance.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- cache-load-balance -->
+
+        <section id="cache-problems">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">分布式缓存常见问题</h1>
+            </div>
+            <div class="content">
+              <p class="fragment"><b>缓存穿透</b>指查询一个根本不存在的数据，缓存层和存储层都不命中。一般的处理逻辑是如果存储层都不命中的话，缓存层就没有对应的数据。但在高并发场景中大量的缓存穿透，请求直接落到存储层，稍微不慎后端系统就会被压垮。所以对于缓存穿透我们有以下方案来优化。</p>
+              <p class="fragment"><b>缓存雪崩</b>由于缓存层承载着大量请求，有效保护了存储层，但是如果缓存层由于某些原因不能提供服务，于是所有的请求到达存储层，存储层的调用量会暴增，造成存储层级联宕机的情况。预防和解决缓存雪崩问题可以从以下几方面入手。</p>
+            </div>
+          </div>
+        </section> <!--  -->
+
+        <section id="mod-hash">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">取模法</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack full-size">
+                <div class="full-size">
+                  <p class="fragment">哈希计算公式：key % 节点总数 = Hash节点下标 </p>
+                  <p class="fragment">假设有 3 个服务器节点编号 [0 - 2]，6 个缓存键值对编号 [1 - 6]，则完成哈希映射之后，三个缓存数据映射情况如下：</p>
+                  <p class="fragment">1 % 3 = 1</p>
+                  <p class="fragment">2 % 3 = 2</p>
+                  <p class="fragment">3 % 3 = 0</p>
+                  <p class="fragment">4 % 3 = 1</p>
+                  <p class="fragment">5 % 3 = 2</p>
+                  <p class="fragment">6 % 3 = 0 </p>
+                </div>
+                <div class="r-stack fragment wframe">
+                  <img class="animated slideInLeft" src="img/chapter004/mod-hash.png">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- mod-hash -->
+
+        <section id="mod-hash-problem" data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">取模法的问题</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                取模法实现缓存的负载均衡有什么缺陷吗？
+              </p>
+              <p class="fragment">
+                扩展能力差：
+              </p>
+              <div class="fragment fade-out collapse full-size" data-fragment-after="group1-last">
+                <div class="r-stack full-size">
+                  <div class="full-size">
+                    <p class="fragment">
+                      假设新增了 1 个服务器节点，由原来的 3 个服务节点变成 4 个节点编号 [0 - 3]，哈希映射情况如下：
+                    </p>
+                    <p class="fragment">1 % 4 = 1</p>
+                    <p class="fragment">2 % 4 = 2</p>
+                    <p class="fragment">3 % 4 = 3</p>
+                    <p class="fragment">4 % 4 = 0</p>
+                    <p class="fragment">5 % 4 = 1</p>
+                    <p class="fragment">
+                      6 % 4 = 2
+                    </p>
+                  </div>
+                  <div class="r-stack fragment wframe" data-fragment-id="group1-last">
+                    <img class="animated slideInLeft" src="img/chapter004/mod-hash-add-node.png">
+                  </div>
+                </div>
+              </div>
+              <p class="fragment">
+                容错能力不佳：
+              </p>
+              <div class="full-size">
+                <div class="r-stack full-size">
+                  <div class="full-size">
+                    <p class="fragment">
+                      假设删除 1 个服务器节点，由最初的 3 个服务节点变成 2 个，节点编号 [0 - 1]，哈希映射情况如下：
+                    </p>
+                    <p class="fragment">1 % 2 = 1</p>
+                    <p class="fragment">2 % 2 = 0</p>
+                    <p class="fragment">3 % 2 = 1</p>
+                    <p class="fragment">4 % 2 = 0</p>
+                    <p class="fragment">5 % 2 = 1</p>
+                    <p class="fragment">6 % 2 = 0</p>
+                  </div>
+                  <div class="r-stack fragment wframe">
+                    <img class="animated slideInLeft" src="img/chapter004/mod-hash-remove-node.png">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- mod-hash-problem -->
+
+        <section id="consistent-hash-basics">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">一致性哈希概述</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">一致哈希由 MIT 的 David Karger 及其合作者提出，现在这一思想已经扩展到其它领域。</p>
+              <p class="fragment">在这篇1997年发表的学术论文中介绍了一致哈希如何应用于用户易变的分布式Web服务中。</p>
+              <p class="fragment">一致哈希也可用于实现健壮缓存来减少大型Web应用中系统部分失效带来的负面影响。</p>
+              <p class="fragment">一句话概括一致性哈希：就是普通取模哈希算法的改良版，哈希函数计算方法不变，只不过是通过构建环状的 Hash 空间代替普通的线性 Hash 空间。</p>
+              <p class="fragment">
+                一致性哈希由以下步骤组成：
+              </p>
+            </div>
+          </div>
+        </section> <!-- consistent-hash-basics -->
+
+        <section id="consistent-hash-space">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">哈希空间环</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                选择一个足够大的Hash空间（一般是 0 ~ 2^32）构成一个哈希环。
+              </p>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter004/hash-ring.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- hash-space -->
+
+        <section id="consistent-hash-calculate-cache-server">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">计算缓存服务器位置</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                对于缓存集群内的每个存储服务器节点计算 Hash 值，可以用服务器的 IP 或 主机名计算得到哈希值，计算得到的哈希值就是服务节点在 Hash 环上的位置。
+              </p>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter004/server-location.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- calculate-cache-server -->
+
+        <section id="consistent-hash-calculate-cache-key">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">计算缓存key的位置</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                对每个需要存储的数据 key 同样也计算一次哈希值，计算之后的哈希也映射到环上。
+              </p>
+              <p class="fragment">
+                数据存储在具体哪个缓存服务器上是沿顺时针的方向找到的环上的第一个服务器节点。
+              </p>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter004/key-location.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- calculate-cache-key -->
+
+        <section id="consistent-hash-add-node">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">增加缓存节点</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack">
+                <img class="fragment" src="img/chapter004/consistent-hash-add-node.png" alt="">
+              </div>
+              <p class="fragment">
+                当缓存服务集群要新增一个节点node3时，受影响的只有 key3 对应的数据 value3，此时只需把 value3 由原来的节点 node0 迁移到新增节点 node3 即可，其余节点存储的数据保持不动。
+              </p>
+            </div>
+          </div>
+        </section> <!-- add-node -->
+
+        <section id="consistent-hash-remove-node">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">删除节点</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack">
+                <img class="fragment" src="img/chapter004/consistent-hash-remove-node.png" alt="">
+              </div>
+              <p class="fragment">
+                假设 node2 节点宕机下线，则原来存储于 node2 的数据 value2 和 value5 ，只需按顺时针方向选择新的存储节点 node0 存放即可，不会对其他节点数据产生影响。一致性哈希能把节点宕机造成的影响控制在顺时针相邻节点之间，避免对整个集群造成影响。
+              </p>
+            </div>
+          </div>
+        </section> <!-- consistent-hash-remove-node -->
+
+        <section id="consistent-hash-flaws">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">思考</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                <b>思考</b>：一致性哈希还存在缺陷吗？
+              </p>
+              <p class="fragment">
+                若缓存集群内的服务节点比较少，就像我们例子中的三个节点，而哈希环的空间又有很大（一般是 0 ~ 2^32），这会导致什么问题呢？
+              </p>
+            </div>
+          </div>
+        </section> <!-- consistent-hash-flaws -->
+
+        <section id="data-lean">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">数据倾斜问题</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">较少的服务节点哈希值聚集在一起，比如只有三个节点node0 、node1、node2 聚集在一起，则可能出现缓存大部分数据的 key 哈希都映射到同一个节点上，</p>
+              <p class="fragment">这种情况称为数据倾斜。给单个节点很大的压力！</p>
+              <div class="r-stack">
+                <img class="fragment" src="img/chapter004/consistent-hash-data-lean.png" alt="">
+              </div>
+            </div>
+          </div>
+        </section> <!-- data-lean -->
+
+        <section id="virtual-node">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟节点</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">所谓虚拟节点，就是对原来单一的物理节点在哈希环上虚拟出几个它的分身节点，这些分身节点称为「虚拟节点」。</p>
+              <p class="fragment">打到分身节点上的数据实际上也是映射到分身对应的物理节点上，这样一个物理节点可以通过虚拟节点的方式均匀分散在哈希环的各个部分，解决了数据倾斜问题。</p>
+              <p class="fragment">由于虚拟节点分散在哈希环各个部分，当某个节点宕机下线，他所存储的数据会被均匀分配给其他各个节点，避免对单一节点突发压力导致的节点雪崩问题。</p>
+              <div class="r-stack">
+                <img class="fragment" src="img/chapter004/virtual-node.png" alt="">
+              </div>
+            </div>
+          </div>
+        </section> <!-- virtual-node -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="zookeeper-basics">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">ZooKeeper概述</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">ZooKeeper是Apache软件基金会的一个软件项目，它为大型分布式计算提供开源的分布式配置服务、同步服务和命名注册。</p>
+              <p class="fragment">ZooKeeper曾经是Hadoop的一个子项目，但现在是一个独立的顶级项目。</p>
+              <p class="fragment">ZooKeeper的架构通过冗余服务实现高可用性。因此，如果第一次无应答，客户端就可以询问另一台ZooKeeper主机。</p>
+              <p class="fragment">ZooKeeper节点将它们的数据存储于一个分层的命名空间，非常类似于一个文件系统或一个前缀树结构。</p>
+              <p class="fragment">客户端可以在节点读写，从而以这种方式拥有一个共享的配置服务。</p>
+            </div>
+          </div>
+        </section> <!-- zookeeper-basics -->
+
+        <section id="zookeeper-application">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">ZooKeeper的应用场景</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                <b>
+                  配置管理（configuration management）：
+                </b>
+              </p>
+              <p class="fragment">
+                如果我们做普通的 Java 应用，一般配置项就是一个本地的配置文件，如果是微服务系统，各个独立服务都要使用集中化的配置管理，这个时候就需要 ZooKeeper。
+              </p>
+              <p class="fragment">
+                <b>
+                  DNS 服务
+                </b>
+              </p>
+              <p class="fragment">
+                <b>
+                  组成员管理（group membership）
+                </b>
+              </p>
+              <p class="fragment">
+                <b>
+                  各种分布式锁
+                </b>
+              </p>
+            </div>
+          </div>
+        </section> <!-- zookeeper-application -->
+
+        <section id="install-zookeeper">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">安装ZooKeeper</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">ZooKeeper是用Java开发的，无论在任何系统下，只有能运行JRE，就可以直接使用ZooKeeper而无需任何繁琐的安装</p>
+              <p class="fragment"><b>下载</b>：<br>
+              https://archive.apache.org/dist/zookeeper/stable/
+              </p>
+              <p class="fragment"><b>配置</b></p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+export ZOOKEEPER_HOME=/usr/local/apache-zookeeper-3.5.6-bin
+export PATH=$PATH:$ZOOKEEPER_HOME/bin:$ZOOKEEPER_HOME/conf
+                </script>
+              </code></pre>
+<p class="fragment"><b>运行</b></p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+zkServer.sh start
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- install-zookeeper -->
+
+        <section id="config-zookeeper">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">配置ZooKeeper</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                conf 目录下的 zoo_sample.cfg 重命名为 zoo.cfg，然后查看配置：
+              </p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+# 心跳检查的时间 2秒
+tickTime=2000 # 初始化时 连接到服务器端的间隔次数，总时间10*2=20秒
+initLimit=10# ZK Leader 和follower 之间通讯的次数，总时间5*2=10秒
+syncLimit=5# 存储内存中数据快照的位置，如果不设置参数，更新事务日志将被存储到默认位置。
+dataDir=/data/zookeeper# ZK 服务器端的监听端口  clientPort=2181
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- config-zookeeper -->
+
+        <section id="ZooKeeper">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">ZooKeeper客户端</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">ZooKeeper大部分时候是由程序调用ZooKeeper服务器提供的API来使用</p>
+              <p class="fragment">但为了方便管理和维护，ZooKeeper默认还是提供了一个命令行客户端：zkCli</p>
+              <p class="fragment">这也是一个Java程序，只要有Java运行环境即可执行，可以通过程序提供的zkCli.sh脚本来启动Java程序</p>
+              <p class="fragment">
+                执行zkCli.sh时，需要执行要连接的ZooKeeper服务器的IP地址，若未提供，则默认连接本机的服务
+              </p>
+              <p class="fragment">在执行 zkCli.sh 命令后，会出现很多消息，这些消息证明我们的 zkCli 和 ZooKeeper 的节点建立了有效连接。</p>
+              <p class="fragment">使用 ls -R / 可以递归查找 ZooKeeper 的 znode 节点，使用 create /znode_name 可以创建 znode 节点</p>
+            </div>
+          </div>
+        </section> <!-- ZooKeeper -->
+
+        <section id="install-zookeeper-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：安装ZooKeeper</h1>
+            </div>
+            <div class="content">
+            
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "install-zookeeper",
+                  url: "video/chapter004/安装ZooKeeper_batch.mp4",
+                  pauses: [0, 6.624348, 77.766734, 108.630031, 124.602294, 131.733639, 152.647281, 162.994581, 197.891681, 245.428108, 271.821608, 275.634984, 353.25, 491.216357, 532.013195, 537.273335, 555.760583, 568.720362, 581.791667, 584.611316, 592.037816, 607.555041]
+                });
+              </script>
+              <div id="install-zookeeper-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- install-zookeeper-demo -->
+
+        <section id="zookeeper-cluster">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">ZooKeeper集群</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">ZooKeeper一般是作为其他服务的注册节点，或者分布式锁节点</p>
+              <p class="fragment">如果ZooKeeper节点出现问题，则整个服务将无法继续，造成系统瘫痪</p>
+              <p class="fragment">一般会将ZooKeeper节点备份很多份，建立一个ZooKeeper集群</p>
+              <p class="fragment">集群中任何一个ZooKeeper实例出现问题，其他ZooKeeper实例还能继续提供服务</p>
+              <p class="fragment">ZooKeeper有自己的错误发现机制和选举机制，无需类似Keepalived服务的支持</p>
+              <p class="fragment">
+                要配置ZooKeeper集群需要在配置文件中加入，参与集群的ZooKeeper实例的地址：
+              </p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                <script type="text/template">
+server.1=xxx.xxx.xxx.xxx:2888:3888
+server.2=xxx.xxx.xxx.xxx:2888:3888
+server.3=xxx.xxx.xxx.xxx:2888:3888
+                </script>
+              </code></pre>
+              <p class="fragment">其中2888原子广播端口，3888选举端口，zookeeper有几个节点，就配置几个server。</p>
+              <p class="fragment">此外，还需在zookeeper数据文件所在的目录下创建一个文件叫myid，其中写上一个数字表明当前机器是哪一个编号的机器。例如1号服务器，则在文件中仅填写一个1。</p>
+              <p class="fragment"><b>集群注意事项</b></p>
+              <p class="fragment">一般集群内服务器数量为奇数</p>
+              <p class="fragment">超过一半的服务器启动后才能提供服务</p>
+              <p class="fragment">超过一般的服务器失效后，整个集群服务失败</p>
+            </div>
+          </div>
+        </section> <!-- zookeeper-cluster -->
+
+        <section id="config-zookeeper-cluster-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：配置ZooKeeper集群</h1>
+            </div>
+            <div class="content">
+            
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+            
+              <script>
+                vIns.push({
+                  id: "zookeeper-cluster",
+                  url: "video/chapter004/配置ZooKeeper集群_batch.mp4",
+                  pauses: [0, 5.971701, 22.014011, 36.778284, 73.175663, 85.741795, 113.109789, 121.350017, 123.339046, 146.382188, 163.498, 197.093505, 198.316969, 227.539443, 293.300073, 365.817751, 385.11613, 398.685375, 406.568952, 417.373286, 421.108027, 430.895182, 437.507741, 444.41241, 463.885959, 471.886792, 487.432138, 491.864094, 500.584826, 509.636419, 524.764768, 560.51464, 567.583284, 576.277749, 601.585479]
+                });
+              </script>
+              <div id="zookeeper-cluster-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- config-zookeeper-cluster-demo -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="capacity">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">思考：业务容量</h1>
+            </div>
+            <div class="content">
+              <p class="fragment"><b>场景一</b>：即使是用了负载均衡技术，一个用户的业务依然是单一地在一个服务器上运行，若业务已经负载到单一服务器无法满足任务完成时间的情况下怎么办？</p>
+              <p class="fragment"><b>场景二</b>：不同的任务对于资源的需求不同，例如，生成HTML回复要求多核，但单核处理能力不要求很强。但业务查询统计功能要求单核任务强。如何使用不同的服务器种类，分流不同的业务？</p>
+            </div>
+          </div>
+        </section> <!-- capacity -->
+
+        <section id="traditional problem">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">传统部署方法的问题</h1>
+            </div>
+            <div class="content">
+<p class="fragment">(1) 当服务越来越多时，服务URL配置管理变得非常困难，硬件负载均衡器的单点压力也越来越大。</p>
+<p class="fragment">此时需要一个服务注册中心，动态的注册和发现服务，使服务的位置透明。并通过在消费方获取服务提供方地址列表，实现软负载均衡和Failover，降低对硬件负载均衡器的依赖，也能减少部分成本。</p>
+<p class="fragment">(2) 服务间依赖关系变得错踪复杂，甚至分不清哪个应用要在哪个应用之前启动，架构师都不能完整的描述应用的架构关系。</p>
+<p class="fragment">这时，需要自动画出应用间的依赖关系图，以帮助架构师理清理关系。</p>
+<p class="fragment">(3) 接着，服务的调用量越来越大，服务的容量问题就暴露出来，这个服务需要多少机器支撑？什么时候该加机器？</p>
+<p class="fragment">为了解决这些问题，首先，要将服务现在每天的调用量，响应时间，都统计出来，作为容量规划的参考指标。其次，要可以动态调整权重，在线上，将某台机器的权重一直加大，并在加大的过程中记录响应时间的变化，直到响应时间到达阀值，记录此时的访问量，再以此访问量乘以机器数反推总容量。</p>
+            </div>
+          </div>
+        </section> <!-- traditional problem -->
+
+        <section id="micro-service">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">微服务</h1>
+            </div>
+            <div class="content">
+              服务（Microservices）是一种架构风格，一个大型复杂软件应用由一个或多个微服务组成。系统中的各个微服务可被独立部署，各个微服务之间是松耦合的。每个微服务仅关注于完成一件任务并很好地完成该任务。在所有情况下，每个任务代表着一个小的业务能力，而无论是Dobbo或者是SpringCloud都属于Java的微服务框架。
+            </div>
+          </div>
+        </section> <!-- micro-service -->
+
+        <section id="what-is-dubbo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是Dubbo</h1>
+            </div>
+            <div class="content">
+              ubbo 是一个分布式服务框架，致力于提供高性能和透明化的 RPC 远程服务调用方案，以及 SOA 服务治理方案。简单的说，Dubbo 就是个服务框架，说白了就是个远程服务调用的分布式框架。
+
+面向接口代理的高性能RPC调用
+提供高性能的基于代理的远程调用能力，服务以接口为粒度，为开发者屏蔽远程调用底层细节。
+
+服务自动注册与发现
+支持多种注册中心服务，服务实例上下线实时感知。
+
+运行期流量调度
+内置条件、脚本等路由策略，通过配置不同的路由规则，轻松实现灰度发布，同机房优先等功能。
+
+智能负载均衡
+内置多种负载均衡策略，智能感知下游节点健康状况，显著减少调用延迟，提高系统吞吐量。
+
+高度可扩展能力
+遵循微内核+插件的设计原则，所有核心能力如Protocol、Transport、Serialization被设计为扩展点，平等对待内置实现和第三方实现。
+
+可视化的服务治理与运维
+提供丰富服务治理、运维工具：随时查询服务元数据、服务健康状态及调用统计，实时下发路由策略、调整配置参数。
+
+            </div>
+          </div>
+        </section> <!-- what-is-dubbo -->
+
+        <section id="dubbo-architecture">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Dubbo的架构</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter004/dubbo-architecture.png" alt="">
+            </div>
+          </div>
+        </section> <!-- dubbo-architectur -->
+
+        <section id="dubbo-advantages">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Dubbo的优点</h1>
+            </div>
+            <div class="content">
+远程通讯: 提供对多种基于长连接的 NIO 框架抽象封装（非阻塞 I/O 的通信方式），包括多种线程模型、序列化，以及“请求-响应”模式的信息交换方式。
+集群容错: 提供基于接口方法的透明远程过程调用（RPC），包括多协议支持（自定义 RPC 协议），以及软负载均衡，失败容错，地址路由，动态配置等集群支持。
+自动发现: 基于注册中心目录服务，使服务消费方能动态的查找服务提供方，使地址透明，使服务提供方可以平滑增加或减少机器。
+            </div>
+          </div>
+        </section> <!-- dubbo-advantages -->
+
+        <section id="dubbo-disadvantages">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Dubbo的不足</h1>
+            </div>
+            <div class="content">
+              
+Registry 严重依赖第三方组件（zookeeper 或者 redis），当这些组件出现问题时，服务调用很快就会中断。
+Dubbo 只支持 RPC 调用。使得服务提供方（抽象接口）与调用方在代码上产生了强依赖，服务提供者需要不断将包含抽象接口的 jar 包打包出来供消费者使用。一旦打包出现问题，就会导致服务调用出错，并且以后发布部署会成很大问题（太强的依赖关系）。
+另外，以后要兼容服务，Dubbo RPC 本身不支持跨语言（可以用跨语言 RPC 框架解决，比如gRPC（重复封装了），或者自己再包一层 REST 服务，提供跨平台的服务调用实现，但相对麻烦很多）
+Dubbo 只是实现了服务治理，其他微服务框架并未包含，如果需要使用，需要结合第三方框架实现（比如分布式配置用淘宝的 Diamond、服务跟踪用京东的 Hydra，但使用相对麻烦些），开发成本较高，且风险较大。
+            </div>
+          </div>
+        </section> <!-- dubbo-disadvantages -->
+
+        <section id="dubbo-registry">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Dubbo的注册中心</h1>
+            </div>
+            <div class="content">
+              
+Zookeeper通常用作Dubbo服务的注册中心，Dubbo原先基于数据库的注册中心，没采用Zookeeper，Zookeeper一个分布式的服务框架，是树型的目录服务的数据存储，能做到集群管理数据 ，这里能很好的作为Dubbo服务的注册中心，Dubbo能与Zookeeper做到集群部署，当提供者出现断电等异常停机时，Zookeeper注册中心能自动删除提供者信息，当提供者重启时，能自动恢复注册数据，以及订阅请求。
+            </div>
+          </div>
+        </section> <!-- dubbo-registry -->
+
+        <section id="dubbo-minitor">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Dubbo的监控中心</h1>
+            </div>
+            <div class="content">
+              
+监控中心是一个网页化的管理工具，可以查看和管理Dubbo分布式业务。
+监控中心在Dubbo中不是必须的，不配置也可以使用Dubbo。但正常项目还是会使用。
+
+Duboo监控中心由前端和后端两部分组成：
+前端使用Vue.js技术
+后端使用SpringBoot技术
+<div class="r-stack fragment">
+  <img class="animated slideInLeft" src="img/chapter004/dubbo-monitor.png">
+</div>
+            </div>
+          </div>
+        </section> <!-- dubbo-minitor -->
+
+        <section id="distributed-topoogy">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">分布式系统业务拓扑</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter004/distributed-topology.png" alt="">
+            </div>
+          </div>
+        </section> <!-- distributed-topoogy -->
+
+        <section id="config-build-environment">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">配置编译环境</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">先决条件：</p>
+              <p class="fragment">安装Java环境</p>
+              <p class="fragment">安装Maven，修改仓库地址到阿里云</p>
+              <p class="fragment">安装NodeJs，修改仓库地址到阿里云</p>
+            </div>
+          </div>
+        </section> <!-- config-dubbo-monitor -->
+
+        <section id="config-build-environment-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：配置编译环境</h1>
+            </div>
+            <div class="content full-size">
+            
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "config-build-environment",
+                  url: "video/chapter004/配置Dubbo编译环境_batch.mp4",
+                  pauses: [0, 17.200631, 35.25219, 40.365211, 48.102975, 62.261875, 65.072167, 70.429154, 79.645362, 94.701375, 114.665618, 144.480305, 154.793405, 169.481161, 203.232791, 241.481067, 257.25, 319.59311, 331.519419]
+                });
+              </script>
+              <div id="config-build-environment-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- config-build-environment-demo -->
+
+        <section id="config-monitor">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">配置监控中心</h1>
+            </div>
+            <div class="content">
+<p class="fragment">构建配置监控中心</p>
+<p class="fragment">使用NodeJs构建前端：npm run build/dev</p>
+<p class="fragment">使用Maven构建后端：mvn clean package Dmaven.test.skip=true</p>
+<p class="fragment">配置前后端端口</p>
+<p class="fragment">启动前端</p>
+<p class="fragment">启动后端</p>
+<p class="fragment">根据提示访问前端页面</p>
+            </div>
+          </div>
+        </section> <!-- config-monitor -->
+
+        <section id="config-monitor-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：配置Dubbo监控中心</h1>
+            </div>
+            <div class="content full-size">
+            
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+            
+              <script>
+                vIns.push({
+                  id: "config-dubbo-monitor",
+                  url: "video/chapter004/编译Dubbo监控中心_batch.mp4",
+                  pauses: [0, 9.573983, 14.971314, 22.875, 31.769064, 33.164283, 33.539629, 56.201033, 65.899911, 107.359325, 117.195482, 129.213562, 150.623113, 157.414983, 235.926398, 254.357464, 268.54855, 283.286547, 287.352, 306.195, 339.884484, 351.570989, 388.296, 404.037987, 451.933844, 485.201, 510.774, 532.308, 555.189, 609.626, 635.51, 692.726, 755.392, 800.347, 843.941]
+                });
+              </script>
+              <div id="config-dubbo-monitor-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- config-monitor-demo -->
+
+        <section id="dubbo-project">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Dubbo项目结构</h1>
+            </div>
+            <div class="content">
+             <p class="fragment">一个Dubbo项目一般来说分为2个端：服务提供者和服务消费者</p>
+             <p class="fragment">需要为这两个项目分别建立一个工程</p>
+             <p class="fragment">此外，一般还会将所有的服务接口提取到一个独立的项目中去</p>
+             <p class="fragment">所有服务接口涉及到的参数和返回值的实体类也需要提取到该独立项目中</p>
+             <p class="fragment">项目构建方式必须一致</p>
+             <p class="fragment">若公共服务接口使用Maven，那整个项目必须使用Maven</p>
+             <p class="fragment">若公共服务接口使用Gradle，那整个项目必须使用Gradle</p>
+             <p class="fragment">不推荐除Maven和Gradle之外的其他方式构建项目</p>
+            </div>
+          </div>
+        </section> <!-- dubbo-project -->
+
+        <section id="develop-common">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">开发公共接口项目</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">定义服务接口</p>
+              <p class="fragment">定义实体类</p>
+              <p class="fragment">其他两个项目必须依赖本项目</p>
+            </div>
+          </div>
+        </section> <!-- develop-common -->
+
+        <section id="develop-service-provider">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">开发服务提供者</h1>
+            </div>
+            <div class="content">
+<p class="fragment">创建SpringBoot项目</p>
+<p class="fragment">添加依赖：</p>
+<p class="fragment">dubbo-springboot-starter</p>
+<p class="fragment">zookeeper</p>
+<p class="fragment">cruator</p>
+<p class="fragment">公共接口项目</p>
+<p class="fragment">配置application.yml文件</p>
+<p class="fragment">项目名称</p>
+<p class="fragment">注册中心地址</p>
+<p class="fragment">dubbo服务端口</p>
+<p class="fragment">开发服务，实现接口，使用注解@DubboService</p>
+<p class="fragment">SpringBoot应用程序级添加注解：@EnableDubbo</p>
+            </div>
+          </div>
+        </section> <!-- develop-service-provider -->
+
+        <section id="develop-service-provider-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：开发服务提供者</h1>
+            </div>
+            <div class="content full-size">
+            
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+            
+              <script>
+                vIns.push({
+                  id: "dubbo-service-provider",
+                  url: "video/chapter004/开发Dubbo服务提供者_batch.mp4",
+                  pauses: [0, 9.565392, 25.708216, 56.773975, 65.25574, 135.042, 174.432916, 182.755858, 202.304264, 207.506956, 210.835994, 216.282736, 220.285968, 228.531453, 232.755753, 235.553491, 263.493087, 266.451592, 294.176096, 402.239399, 416.205025, 445.46619, 456.843358, 466.545413, 506.755085, 561.099607, 581.934226, 693.933016, 703.205511, 710.761983, 745.66256, 765.091665, 793.347021, 826.458333, 844.178963, 914.200066, 947.833, 956.796, 976.216]
+                });
+              </script>
+              <div id="dubbo-service-provider-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- develop-service-provider-demo -->
+
+        <section id="develop-service-consumer">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">开发服务使用者</h1>
+            </div>
+            <div class="content">
+<p class="fragment">创建SpringBoot项目</p>
+<p class="fragment">添加依赖：</p>
+<p class="fragment">dubbo-springboot-starter</p>
+<p class="fragment">zookeeper</p>
+<p class="fragment">cruator</p>
+<p class="fragment">公共接口项目</p>
+<p class="fragment">配置application.yml文件</p>
+<p class="fragment">项目名称</p>
+<p class="fragment">注册中心地址</p>
+<p class="fragment">dubbo服务端口</p>
+<p class="fragment">以接口方式调用服务，接口上使用注解@DubboReference</p>
+            </div>
+          </div>
+        </section> <!-- develop-service-consumer -->
+
+        <section id="develop-service-consumer-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：开发服务使用者</h1>
+            </div>
+            <div class="content full-size">
+            
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+            
+              <script>
+                vIns.push({
+                  id: "dubbo-service-consumer",
+                  url: "video/chapter004/开发Dubbo服务消费者_batch.mp4",
+                  pauses: [0, 26.221, 47.383, 79.584, 136.110377, 151.395544, 167.132322, 247.321847, 265.435, 278.315, 313.277, 360.2, 395.162]
+                });
+              </script>
+              <div id="dubbo-service-consumer-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- develop-service-consumer-demo -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="application-file-system">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">应用级文件系统</h1>
+            </div>
+            <div class="content">
+<b>集中式文件系统</b>
+<p class="fragment">典型方式NFS (for Linux)和Samba (for Windows)</p>
+<p class="fragment">基于存储厂商提供的集中式存储设备，如</p>
+<ul>
+  <li class="fragment">磁盘阵列</li>
+  <li class="fragment">NetApp Filer</li>
+</ul>
+<b>分布式文件系统</b>
+<p class="fragment">
+  基本都是基于类似Google FS的思想
+</p>
+<p class="fragment">
+  基于用于如何使用文件系统，可以分为
+</p>
+<ul>
+  <li class="fragment">使用专用API访问，如FastDFS 、MogileFS 、HDFS</li>
+  <li class="fragment">通用文件系统，可以mount使用。如Lustre 、KFS 、MooseFS</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- application-file-system -->
+
+        <section id="fast-dfs-intro">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FastDFS简介</h1>
+            </div>
+            <div class="content">
+<p class="fragment">FastDFS是一个轻量级的开源分布式文件系统</p>
+<p class="fragment">FastDFS是国产的</p>
+<p class="fragment">FastDFS主要解决了大容量的文件存储和高并发访问的问题，文件存取时实现了负载均衡</p>
+<p class="fragment">实现了软件方式的RAID，可以使用廉价的硬盘进行存储</p>
+<p class="fragment">支持存储服务器在线扩容</p>
+<p class="fragment">支持主从文件</p>
+<p class="fragment">支持相同内容的文件只保存一份，节约磁盘空间</p>
+<p class="fragment"><b>只能通过Client API访问</b>，不支持POSIX访问方式</p>
+<p class="fragment">特别适合大中型网站使用，用来存储资源文件（如：图片、文档、音频、视频等等）</p>
+
+            </div>
+          </div>
+        </section> <!-- fast-dfs-intro -->
+
+        <section id="fdfs-nfs">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FastDFS和NFS的对比</h1>
+            </div>
+            <div class="content">
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <p><strong>指标</strong></p>
+                    </td>
+                    <td>
+                      <p><strong>FastDFS</strong></p>
+                    </td>
+                    <td>
+                      <p><strong>NFS</strong></p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>线性扩容性</p>
+                    </td>
+                    <td>
+                      <p>高</p>
+                    </td>
+                    <td>
+                      <p>差</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>文件高并发访问性能</p>
+                    </td>
+                    <td>
+                      <p>高</p>
+                    </td>
+                    <td>
+                      <p>差</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>文件访问方式</p>
+                    </td>
+                    <td>
+                      <p>专有API</p>
+                    </td>
+                    <td>
+                      <p>POSIX</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>硬件成本</p>
+                    </td>
+                    <td>
+                      <p>较低</p>
+                    </td>
+                    <td>
+                      <p>中等</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>相同内容文件只保存一份</p>
+                    </td>
+                    <td>
+                      <p>支持</p>
+                    </td>
+                    <td>
+                      <p>不支持</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section> <!-- fdfs-nfs -->
+
+        <section id="fdsf-hdfs">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FastDFS和HDFS的区别和用途</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  <b>HDFS</b>：
+  要解决并行计算中分布式存储数据的问题。其单个数据文件通常很大，采用了分块（切分）存储的方式。
+</p>
+<p class="fragment">
+  <b>FastDFS</b>：
+  主要用于大中网站，为文件上传和下载提供在线服务。所以在负载均衡、动态扩容等方面都支持得比较好，FastDFS不会对文件进行分快（切分）存储。
+</p>
+            </div>
+          </div>
+        </section> <!-- fdsf-hdfs -->
+
+        <section id="fast-dfs-architecture">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FastDFS架构</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter004/fast-dfs-architecture.png" alt="">
+            </div>
+          </div>
+        </section> <!-- fast-dfs-architecture -->
+
+        <section id="fast-dfs-concepts">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FastDFS相关概念</h1>
+            </div>
+            <div class="content">
+<p class="fragment"><b>Tracker Server</b>：跟踪服务器，主要做调度工作，在访问上起负载均衡的作用。记录storage server的状态，是连接Client和Storage server的枢纽。</p>
+<p class="fragment"><b>Storage Server</b>：存储服务器，文件和meta data都保存到存储服务器上</p>
+<p class="fragment"><b>group</b>：组，也可称为卷。同组内服务器上的文件是完全相同的</p>
+<p class="fragment"><b>文件标识</b>：包括两部分：组名和文件名（包含路径）</p>
+<p class="fragment"><b>meta data</b>：文件相关属性，键值对（Key Value Pair）方式，如：width=1024,heigth=768</p>
+            </div>
+          </div>
+        </section> <!-- fast-dfs-concepts -->
+
+        <section id="fast-dfs-features">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FastDFS架构的特点</h1>
+            </div>
+            <div class="content">
+<p class="fragment">各个tracker server之间相互独立</p>
+<p class="fragment">同组的storage server上的文件一致</p>
+<p class="fragment">不同组的storage server相互独立</p>
+<p class="fragment">storage server主动连接tracker server</p>
+            </div>
+          </div>
+        </section> <!-- fast-dfs-features -->
+
+        <section id="fast-dfs-upload">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FastDFS上传流程</h1>
+            </div>
+            <div class="content">
+ <p class="fragment">1. client询问tracker上传到的storage；</p>
+ <p class="fragment">2. tracker返回一台可用的storage；</p>
+ <p class="fragment">3. client直接和storage通信完成文件上传，storage返回文件ID。 </p>
+ <div class="r-stack fragment">
+   <img class="animated slideInLeft" src="img/chapter004/fast-dfs-upload.png">
+ </div>
+            </div>
+          </div>
+        </section> <!-- fast-dfs-upload -->
+
+        <section id="fast-dfs-download">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FastDFS文件下载流程</h1>
+            </div>
+            <div class="content">
+<p class="fragment">1. client询问tracker下载文件的storage，参数为文件ID（组名和文件名）；</p>
+<p class="fragment">2. tracker返回一台可用的storage；</p>
+<p class="fragment">3. client直接和storage通信完成文件下载。</p>
+<div class="r-stack fragment">
+  <img class="animated slideInLeft" src="img/chapter004/fast-dfs-download.png">
+</div>
+
+            </div>
+          </div>
+        </section> <!-- fast-dfs-upload -->
+
+        <section id="install-fast-dfs">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">下载和安装FastDFS</h1>
+            </div>
+            <div class="content">
+<p class="fragment">下载并解压：tar xzf FastDFS_v1.28.tar.gz</p>
+<p class="fragment">需要依赖库文件：libevent 1.4.x</p>
+<p class="fragment">如需要http支持，修改make.sh：</p>
+<p class="fragment"># WITH_HTTPD=1</p>
+<p class="fragment">构建：./make.sh</p>
+<p class="fragment">安装：./make.sh install</p>
+<p class="fragment">分别对tracker和storage的config文件进行修改</p>
+<p class="fragment">启动tracker服务：</p>
+<p class="fragment">/usr/local/bin/fdfs_trackerd /etc/fdfs/tracker.conf</p>
+<p class="fragment">启动Storage服务：</p>
+<p class="fragment">/usr/local/bin/fdfs_storaged /etc/fdfs/storage.conf</p>
+            </div>
+          </div>
+        </section> <!-- install-fast-dfs -->
+
+        <section id="fast-dfs-java-config">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Java配置FastDFS访问</h1>
+            </div>
+            <div class="content">
+<p class="fragment">添加依赖：fastdfs-client-java</p>
+<p class="fragment">添加配置文件：fdfs_client.properties</p>
+<p class="fragment">connect_timeout = 2</p>
+<p class="fragment">network_timeout = 30</p>
+<p class="fragment">charset = UTF-8</p>
+<p class="fragment">http.tracker_http_port = 8088   # tracker Http端口</p>
+<p class="fragment">http.anti_steal_token = no      # 暂无作用</p>
+<p class="fragment">http.secret_key = FastDFS1234567890     # 暂无作用</p>
+<p class="fragment">tracker_server = 192.168.43.60:22122    # tracker Server地址信息</p>
+            </div>
+          </div>
+        </section> <!-- fast-dfs-java-config -->
+
+        <section id="fdfs-init">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">初始化FDFS</h1>
+            </div>
+            <div class="content">
+              
+              <pre class="fragment"><code class="lang-java" data-line-numbers="">
+                <script type="text/template">
+    private  TrackerClient trackerClient = null;
+    private  TrackerServer trackerServer = null;
+    private  StorageServer storageServer = null;
+    private  StorageClient1 storageClient = null;
+
+    // ...
+
+    if (conf.contains("classpath:")) {
+        String path = URLDecoder.decode(getClass().getProtectionDomain().getCodeSource().getLocation().toString(),"UTF-8");
+        path=path.substring(6);
+        conf = conf.replace("classpath:",URLDecoder.decode(path,"UTF-8"));
+    }
+    ClientGlobal.init(conf);
+    trackerClient = new TrackerClient();
+    trackerServer = trackerClient.getConnection();
+    storageServer = null;
+    storageClient = new StorageClient1(trackerServer, storageServer);
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- fdfs-init -->
+
+        <section id="upload-file">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">上传文件</h1>
+            </div>
+            <div class="content">
+              
+              <pre class="fragment"><code class="lang-java" data-line-numbers="">
+                <script type="text/template">
+public String uploadFile(String fileName, String extName, NameValuePair[] metas) {
+  String result=null;
+    try {
+        result = storageClient.upload_file1(fileName, extName, metas);
+    } catch (IOException e) {
+        e.printStackTrace();
+    } catch (MyException e) {
+        e.printStackTrace();
+    }
+  return result;
+}
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- upload-file -->
+
+        <section id="download-file">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">下载文件</h1>
+            </div>
+            <div class="content">
+              
+              <pre class="fragment"><code class="lang-java" data-line-numbers="">
+                <script type="text/template">
+    public int download_file(String path,BufferedOutputStream output) {
+        int result=-1;
+        try {
+            byte[] b = storageClient.download_file1(path);
+            try{
+                if(b != null){
+                    output.write(b);
+                    result=0;
+                }
+            }catch (Exception e){}
+            finally {
+                if (output != null){
+                    try {
+                        output.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+            }
+                }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- download-file -->
+
+        <section id="remove-file">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">删除文件</h1>
+            </div>
+            <div class="content">
+              
+              <pre class="fragment"><code class="lang-java" data-line-numbers="">
+                <script type="text/template">
+    public Integer delete_file(String storagePath){
+        int result=-1;
+        try {
+            result = storageClient.delete_file1(storagePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (MyException e) {
+            e.printStackTrace();
+        }
+        return  result;
+    }
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- remove-file -->
+
+        <section id="thank-you-slide" class="end color--radiant"></section>
+
+      </div> <!-- slides -->
+    </div> <!-- reveal -->
+
+    <script>
+      language = 'cn';
+
+      var myConfig = {
+        "math": math, 
+        "asciinema": {
+          rows: 24,
+          cols: 81
+        }
+      };
+
+      defineMyPlugins = function() {
+        myPreloadPlugins = [
+          /**** my plugins ****/
+          RevealLoadCode, RevealFragmentOrder,
+        ];
+        myPlugins = [
+          /**** built-in plugins ****/
+          /**** third-party plugins ****/
+          /**** my plugins ****/
+          RevealCodeTips, RevealFragmentGroup,
+        ];
+      };
+    </script>
+    <script src="js/common.js"></script>
+  </body>
+</html>

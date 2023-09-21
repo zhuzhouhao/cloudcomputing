@@ -1,0 +1,1063 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>云计算 第一章</title>
+
+    <link rel="stylesheet" href="css/include.css" media="all">
+
+    <!-- pre-libraries -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+
+    <script src="js/define.js"></script>
+	</head>
+	<body>
+		<div class="reveal pattern--random">
+			<div class="slides">
+
+        <script>
+          courseName = "云计算";
+          chapterName = "第一章 云计算简介";
+          toc = [
+            {name: "大数据时代", desc: ""},
+            {name: "云计算", desc: "大数据的计算"},
+            {name: "云计算的分类", desc: ""},
+            {name: "云计算的发展现状", desc: ""},
+            {name: "压倒性的成本优势", desc: ""},
+          ];
+        </script>
+
+				<section class="cover" id="cover">
+				</section>
+
+				<section class="toc color--midnight" id="toc">
+				</section>
+
+				<section class="subsection color--radiant">
+				</section>
+
+				<section id="big-data-search">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">“大数据”(Big Data)的搜索指数</h1>
+						</div>
+						<div class="content full-heiht">
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter001/big-data-search-index.png" alt="大数据" style="height: 100%;">
+              </div>
+            </div>
+					</div>
+				</section>
+
+				<section id="global-data-amount">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">全球数据总量变化图</h1>
+						</div>
+						<div class="content">
+              <div class="r-stack fragment">
+                <img class="animated slideInUp" src="img/chapter001/global-data-amount.png" alt="全球数据总量" style="height: 100%;">
+              </div>
+            </div>
+					</div>
+				</section>
+
+        <section id="why-data-increase">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header"></h1>
+            </div>
+            <div class="content">
+              <div class="r-fit-text" style="color: red;">
+                为什么
+              </div>
+              <div class="r-fit-text">
+                全球数据量增长如此之快？
+              </div>
+            </div>
+          </div>
+        </section> <!-- why-data-increase -->
+
+        <section id="reason-data-increase-1" data-auto-animate="">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">数据快速增长的原因</h1>
+						</div>
+						<div class="content">
+              <p class="fragment">
+                1. 数据生产方式的改变
+              </p>
+              <ul>
+                <li class="fragment">手工产生数据
+                  <ul>
+                    <li class="fragment">效率低，难以保存</li>
+                  </ul>
+                </li>
+                <li class="fragment">传感器自动生成数据
+                  <ul>
+                    <li class="fragment">
+                      保守估计，2020年传感器有1000亿个
+                    </li>
+                    <li class="fragment">
+                      这些传感器24小时都在产生数据
+                    </li>
+                  </ul>
+                </li>
+                <li class="fragment">倾向于收集全量数据
+                  <ul>
+                    <li class="fragment">怕数据的缺失会得出错误的结论</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+					</div>
+				</section>
+
+        <section id="reason-data-increase-2" data-auto-animate="">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">数据快速增长的原因</h1>
+						</div>
+						<div class="content">
+              <p>
+                1. 数据生产方式的改变
+              </p>
+              <p>
+                2. 人类越来越依赖数据
+              </p>
+              <ul>
+                <li class="fragment">人类的日常工作和生活与数据密不可分
+                  <ul>
+                    <li class="fragment">利用公交信息来决定何时出发</li>
+                    <li class="fragment">利用微博来了解各种实事和资讯</li>
+                  </ul>
+                </li>
+                <li class="fragment">科学研究已经进入“数据科学”时代
+                  <ul>
+                    <li class="fragment">数据为王，大家都争取获取更多数据</li>
+                    <li class="fragment">大型强子对撞机每秒产生40TB的数据</li>
+                  </ul>
+                </li>
+                <li class="fragment">各行各业也越来越依赖于数据手段来开展工作
+                  <ul>
+                    <li class="fragment">城市摄像头有几十万个</li>
+                    <li class="fragment">新农业依赖于各种传感器（如温度、湿度等）</li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+					</div>
+				</section>
+
+        <section id="what-is-big-data">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是大数据</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack">
+                <img class="animated flip" src="img/chapter001/big-data.png" style="height: 60%;" alt="大数据">
+              </div>
+              <p class="animated lightSpeedInLeft">
+                究竟什么是大数据？
+              </p>
+              <p class="fragment">
+                <b>定义</b>：海量数据或巨量数据，其规模巨大到无法通过目前<span class="fragment highlight-red">主流的计算机系统</span>在<span class="fragment highlight-red">合理时间</span>内获取、存储、管理、处理并提炼以帮助使用者决策。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section id="big-data-feature" data-auto-animate="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">大数据的特点</h1>
+            </div>
+            <div class="content">
+              <p>
+                目前工业界普遍公认的大数据的特点为可以概括为4V+1C：
+              </p>
+              <ul>
+                <li class="fragment">
+                  数据量大（Volume）
+                </li>
+                <li class="fragment">
+                  多样（Variety）
+                </li>
+                <li class="fragment">
+                  快速（Velocity）
+                </li>
+                <li class="fragment">
+                  价值密度低（Value）
+                </li>
+                <li class="fragment">
+                  复杂度（Complexity）
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="big-data-feature2" data-auto-animate="" data-fragment-order="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">大数据的特点</h1>
+            </div>
+            <div class="content" style="height: 80%;">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="volume">
+                    数据量大（Volume）
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-after="volume" data-fragment-group="variety">
+                    多样（Variety）
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="velocity" data-fragment-after="variety">
+                    快速（Velocity）
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="value" data-fragment-after="velocity" >
+                    价值密度低（Value）
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-after="value" data-fragment-group="none">
+                    复杂度（Complexity）
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack" style="margin-top: 50px;">
+                <p class="fragment fade-in-then-out full-width full-height" data-fragment-id="volume">
+                  存储的数据量巨大，PB级别是常态，因而对其分析的计算量也大。
+                </p>
+                <p class="fragment fade-in-then-out fill-size" data-fragment-id="variety">
+                  数据的来源及格式多样，数据格式除了传统的结构化数据外，还包括半结构化或非结构化数据，比如用户上传的音频和视频内容。而随着人类活动的进一步拓宽，数据的来源更加多样。
+                </p>
+                <p class="fragment fade-in-then-out full-size" data-fragment-id="velocity">
+                  数据增长速度快，而且越新的数据价值越大，这就要求对数据的处理速度也要快，以便能够从数据中及时地提取知识，发现价值。
+                </p>
+                <p class="fragment fade-in-then-out full-size" data-fragment-id="value">
+                  需要对大量的数据进行处理，挖掘其潜在的价值，因而，大数据对我们提出的明确要求是设计一种在成本可接受的条件下，通过快速采集、发现和分析，从大量、多种类别的数据中提取价值的体系架构。
+                </p>
+                <p class="fragment full-size">
+                  对数据的处理和分析的难度大。
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="computing-for-big-data">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">云计算——大数据的计算</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                大数据与云计算的关系
+              </p>
+              <p class="fragment r-fit-text">
+                G=f(x)
+              </p>
+              <ul>
+                <li class="fragment">云计算是处理大数据的手段</li>
+                <li class="fragment">大数据是需求</li>
+                <li class="fragment">云计算是手段</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- caculation-for-big-data -->
+
+        <section id="what-is-cloud-computing">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是云计算</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                云计算的长定义
+              </p>
+              <p class="fragment">
+                云计算是一种<span class="fragment highlight-red">商业计算模型</span>。它将计算任务分布在大量计算机构成的<span class="fragment highlight-red">资源池</span>上，使各种应用系统能够<span class="fragment highlight-red">根据需要</span>获取计算力、存储空间和信息服务。
+              </p>
+
+              <p class="fragment">
+                云计算的短定义
+              </p>
+              <p class="fragment">
+                云计算是通过网络<span class="fragment highlight-red">按需</span>提供可<span class="fragment highlight-red">动态伸缩</span>的<span class="fragment highlight-red">廉价</span>计算(等?)服务。
+              </p>
+            </div>
+          </div>
+        </section> <!-- what-is-cloud-computing -->
+
+        <section id="cloud-computing-features1" data-auto-animate="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">云计算的特点</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                从现状上看，云计算具有以下特点：
+              </p>
+              <ul>
+                <li class="fragment">超大规模</li>
+                <li class="fragment">虚拟化</li>
+                <li class="fragment">高可靠性</li>
+                <li class="fragment">通用性</li>
+                <li class="fragment">高可伸缩性</li>
+                <li class="fragment">按需服务</li>
+                <li class="fragment">极其廉价</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- cloud-computing-features-1 -->
+
+        <section id="cloud-computing-features2" data-auto-animate="" data-fragment-order="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">云计算的特点</h1>
+            </div>
+            <div class="content" style="height: 80%;">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="large">
+                  超大规模
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="virtualize" data-fragment-after="large">
+                    虚拟化
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="reliable" data-fragment-after="virtualize">
+                    高可靠性
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="general" data-fragment-after="reliable" >
+                    通用性
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="flex" data-fragment-after="general" >
+                    高可伸缩
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="ondemond" data-fragment-after="flex">
+                    按需服务
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="none" data-fragment-after="ondemond">
+                    极其廉价
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack" style="margin-top: 50px;">
+                <p class="fragment fade-in-then-out full-width full-height" data-fragment-id="large">
+                    “云”具有相当的规模，谷歌云计算已经拥上百万台服务器，亚马逊、IBM、微软、Yahoo、阿里、百度和腾讯等公司的“云”均拥有几十万台服务器。“云”能赋予用户前所未有的计算能力。
+                </p>
+                <p class="fragment fade-in-then-out fill-size" data-fragment-id="virtualize">
+                    云计算支持用户在任意位置、使用各种终端获取服务。所请求的资源来自“云”，而不是固定的有形的实体。应用在“云”中某处运行，但实际上用户无须了解应用运行的具体位置，只需要一台计算机、PAD或手机，就可以通过网络服务来获取各种能力超强的服务。
+                </p>
+                <p class="fragment fade-in-then-out full-size" data-fragment-id="reliable">
+                    “云”使用了数据多副本容错、计算节点同构可互换等措施来保障服务的高可靠性，使用云计算比使用本地计算机更加可靠。
+                </p>
+                <p class="fragment fade-in-then-out full-size" data-fragment-id="general">
+                  “云”的特殊容错措施使得可以采用极其廉价的节点来构成云；“云”的自动化管理使数据中心管理成本大幅降低；“云”的公用性和通用性使资源的利用率大幅提升；“云”设施可以建在电力资源丰富的地区，从而大幅降低能源成本。因此“云”具有前所未有的性能价格比。
+                </p>
+                <p class="fragment fade-in-then-out full-size" data-fragment-id="flex">
+                  云”的规模可以动态伸缩，满足应用和用户规模增长的需要。
+                </p>
+                <p class="fragment fade-in-then-out full-size" data-fragment-id="ondemond">
+                  云”是一个庞大的资源池，用户按需购买，像自来水、电和煤气那样计费。
+                </p>
+                <p class="fragment full-size">
+                    “云”的特殊容错措施使得可以采用极其廉价的节点来构成云；“云”的自动化管理使数据中心管理成本大幅降低；“云”的公用性和通用性使资源的利用率大幅提升；“云”设施可以建在电力资源丰富的地区，从而大幅降低能源成本。因此“云”具有前所未有的性能价格比。
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="service-type">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">按服务类型分类</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack">
+                <div class="full-size">
+                  <p class="fragment">
+                    云计算业务按提供的服务类型分可以分为三类：
+                  </p>
+                  <ul>
+                    <li class="fragment">SaaS</li>
+                    <li class="fragment">PaaS</li>
+                    <li class="fragment">IaaS</li>
+                  </ul>
+                </div>
+                <img class="fragment" src="img/chapter001/as-service-type.png" alt="">
+              </div>
+            </div>
+          </div>
+        </section> <!-- service-type -->
+
+        <section id="iaas">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">IaaS</h1>
+            </div>
+            <div class="content">
+              <div id="iaas-lottie-container">
+                <script>
+                  lIns.push(
+                    {
+                      id: "iaas",
+                      url: "anim/chapter001/IaaS.json",
+                      pauses: [0, 60, 120, 180, 241],
+                    }
+                  );
+                </script>
+              </div>
+            </div>
+          </div>
+        </section> <!-- iaas -->
+
+        <section id="paas">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">PaaS</h1>
+            </div>
+            <div class="content">
+              <div id="paas-lottie-container">
+                <script>
+                  lIns.push(
+                    {
+                      id: "paas",
+                      url: "anim/chapter001/PaaS.json",
+                      pauses: [0, 60, 120, 180],
+                    }
+                  );
+                </script>
+              </div>
+            </div>
+          </div>
+        </section> <!-- paas -->
+
+        <section id="saas">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">SaaS</h1>
+            </div>
+            <div class="content">
+              <div id="saas-lottie-container">
+                <script>
+                  lIns.push(
+                    {
+                      id: "saas",
+                      url: "anim/chapter001/SaaS.json",
+                      pauses: [0, 60, 120, 180],
+                    }
+                  );
+                </script>
+              </div>
+            </div>
+          </div>
+        </section> <!-- saas -->
+
+        <section id="service-type-examples">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">云计算服务类型举例</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                IaaS:
+              </p>
+              <ul>
+                <li class="fragment">
+                  弹性云计算ECS
+                </li>
+              </ul>
+              <p class="fragment">
+                PaaS:
+              </p>
+              <ul>
+                <li class="fragment">百度BAE</li>
+                <li class="fragment">新浪SAE</li>
+                <li class="fragment">阿里ACE</li>
+                <li class="fragment">京东云擎JAE</li>
+              </ul>
+              <p class="fragment">
+                SaaS：
+              </p>
+              <ul>
+                <li class="fragment">协同OA</li>
+                <li class="fragment">CRM</li>
+                <li class="fragment">财务系统</li>
+                <li class="fragment">商业智能系统</li>
+                <li class="fragment">企业邮箱</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- service-type-examples -->
+
+        <section id="deploy-model" data-auto-animate="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">按部署模式分类</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                云计算模型按部署模式可（大致）分为四类：
+              </p>
+              <ul>
+                <li class="fragment">公有云</li>
+                <li class="fragment">私有云</li>
+                <li class="fragment">混合云</li>
+                <li class="fragment">社区云</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- deploy-model -->
+
+        <section id="deploy-model2" data-auto-animate="" data-fragment-order="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">按部署模式分类</h1>
+            </div>
+            <div class="content" style="height: 80%;">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="public">
+                  公有云
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="private" data-fragment-after="public">
+                    私有云
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="hybrid" data-fragment-after="private">
+                    混合云
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="none" data-fragment-after="hybrid">
+                    社区云
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack" style="margin-top: 50px;">
+                <div class="fragment full-size fade-out" data-fragment-id="public" data-fragment-after="public-last">
+                  <p class="fragment">
+                    特征：向社会大众开放，任何符合条件的个人或者单位都可以租赁并使用云资源。
+                  </p>
+                  <ul>
+                    <li class="fragment">阿里云</li>
+                    <li class="fragment">腾讯云</li>
+                    <li class="fragment">化为云</li>
+                    <li class="fragment">亚马逊</li>
+                    <li class="fragment">天翼云</li>
+                    <li class="fragment" data-fragment-id="public-last">……</li>
+                  </ul>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="private" data-fragment-after="private-last">
+                  <p class="fragment">
+                  特征：只供一个企业或者单位内的人员使用，其他的人和机构无权租赁和使用。
+                  </p>
+                  <p class="fragment">
+                    分类：
+                  </p>
+                  <ul>
+                    <li class="fragment">本地私有云
+                      <ul>
+                        <li class="fragment">部署在企业内部</li>
+                        <li class="fragment">安全和边界由企业掌控</li>
+                        <li class="fragment">适合运行关键和机密业务</li>
+                      </ul>
+                    </li>
+                    <li class="fragment">托管私有云
+                      <ul>
+                        <li class="fragment">托管在第三方机房</li>
+                        <li class="fragment">设备可以购买或者租赁</li>
+                        <li class="fragment" data-fragment-id="private-last">一般通过专线连接</li>
+                      </ul>
+                    </li>
+                  </ul>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="hybrid" data-fragment-after="hybrid-last">
+                  <p class="fragment">
+                      特征：只供两个或以上的特定企业或者单位（一般是特定行业或者圈子）内的人员使用，其他的人和机构无权租赁和使用。
+                  </p>
+                  <ul>
+                    <li class="fragment">深圳酒店云</li>
+                    <li class="fragment">区域医疗云</li>
+                    <li class="fragment" data-fragment-id="hybrid-last">高校实验云</li>
+                  </ul>
+                </div>
+                <div class="full-size">
+                  <p class="fragment">
+                    特征：由两个或者以上不同类型的云组成，但对用户感觉就像使用一个云端资源。
+                  </p>
+                  <div class="r-stack full-size fragment">
+                    <img class="animated jello" src="img/chapter001/community-cloud.png" height="65%" style="margin: 0 auto;">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="abroad-development" data-auto-animate="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">国外云计算的先行者</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                云计算在国外有三个公认的先行企业：
+              </p>
+              <ul>
+                <li class="fragment">亚马逊</li>
+                <li class="fragment">谷歌</li>
+                <li class="fragment">微软</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- abroad-development -->
+
+        <section id="abroad-development2" data-auto-animate="" data-fragment-order="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">国外云计算的先行者</h1>
+            </div>
+            <div class="content">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="amazon">
+                    亚马逊
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="google" data-fragment-after="amazon">
+                    谷歌
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="none" data-fragment-after="google">
+                    微软
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack" style="margin-top: 50px;">
+                <div class="fragment full-size fade-out" data-fragment-id="amazon" data-fragment-after="amazon-last">
+                  <p class="fragment">率先在全球提供了弹性计算云EC2（Elastic Computing Cloud）和简单存储服务S3（Simple Storage Service），为企业提供计算和存储服务。</p>
+                  <p class="fragment">收费的服务项目包括存储空间、带宽、CPU资源以及月租费。</p>
+                  <p class="fragment">AWS服务的种类非常齐全</p>
+                  <p class="fragment" data-fragment-id="amazon-last">
+                  全球用户数量已经超过100万
+                  </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="google" data-fragment-after="google-last">
+                  <p class="fragment">最大的云计算技术的使用者</p>
+                  <p class="fragment">谷歌搜索引擎就建立在分布在200多个站点、超过100万台的服务器的支撑之上，而且这些设施的数量正在迅猛增长</p>
+                  <p class="fragment">采用Google Docs之类的应用，用户数据会保存在互联网上的某个位置，可以通过任何一个与互联网相连的终端十分便利地访问和共享这些数据</p>
+                  <p class="fragment">谷歌已经允许第三方在谷歌的云计算中通过Google App Engine运行大型并行应用程序</p>
+                  <p class="fragment" data-fragment-id="google-last">
+                      发表学术论文的形式公开其云计算三大法宝：GFS、MapReduce和Bigtable，并在美国、中国等高校开设如何进行云计算编程的课程
+                  </p>
+                </div>
+                <div>
+                  <p class="fragment">微软于2008年10月推出了Windows Azure操作系统。Azure(译为“蓝天”)是继Windows取代DOS之后，微软的又一次颠覆性转型。</p>
+                  <p class="fragment">微软的云平台包括几十万台服务器.</p>
+                  <p class="fragment">Azure的底层是微软全球基础服务系统，由遍布全球的第四代数据中心构成。</p>
+                  <p class="fragment">微软将为Windows Azure用户推出许多新的功能，不但能更简单地将现有的应用程序转移到云中，而且可以加强云托管应用程序的可用服务，充分体现出微软的“云”+“端”战略。</p>
+                  <p class="fragment">
+                    在中国，微软2014年3月27日宣布由世纪互联负责运营的Microsoft Azure公有云服务正式商用，这是国内首个正式商用的国际公有云服务平台。
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- abroad-development -->
+
+        <section id="domestic-development">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">国内云计算企业现状</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                群雄逐鹿：
+              </p>
+              <ul>
+                <li class="fragment">阿里云</li>
+                <li class="fragment">腾讯云</li>
+                <li class="fragment">华为云</li>
+                <li class="fragment">百度云</li>
+                <li class="fragment">金山云</li>
+                <li class="fragment">网易云</li>
+                <li class="fragment">华三云</li>
+                <li class="fragment">光环云（亚马逊）</li>
+                <li class="fragment">……</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- domestic-development -->
+
+        <section id="development-phrase">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">云计算的发展阶段</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter001/cloud-development-phrase.png" alt="发展阶段示意图">
+              </div>
+            </div>
+          </div>
+        </section> <!-- development-phrase -->
+
+        <section id="global-development">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">全球云计算市场规模及增速</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated slideInUp" src="img/chapter001/global-development.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- global-development -->
+
+        <section id="domestic-development">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">中国公有云市场规模及增速</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated slideInUp" src="img/chapter001/domestic-development.png">
+              </div> 
+            </div>
+          </div>
+        </section> <!-- domestic-development -->
+
+        <section id="domestic-private-cloud-development">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">中国私有云市场规模及增速</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated slideInUp" src="img/chapter001/demestic-private-cloud-development.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- domestic-private-cloud-development -->
+
+        <section id="domestic-public-cloud-development">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">中国公有云细分市场规模及增速</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated slideInUp" src="img/chapter001/demestic-public-cloud-development.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- domestic-public-cloud-development -->
+
+        <section id="domestic-iaas-share">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">中国公有云IaaS市场份额占比</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated rotateIn" src="img/chapter001/domestic-iaas-share.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- domestic-iaas-share -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="it-cost">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">企业IT系统成本</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                企业IT系统的开销主要分为三个部分：
+              </p>
+              <ul>
+                <li class="fragment">硬件采购</li>
+                <li class="fragment">能耗</li>
+                <li class="fragment">管理</li>
+              </ul>
+              <div class="r-stack fragment">
+                <img class="animated slideInUp" src="img/chapter001/it-cost.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- it-cost -->
+
+        <section id="management-cost">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">运营成本比较</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                James Hamilton的统计数据显示，5万个服务器的数据中心和1000个服务器的数据中心的运营成本对比：
+              </p>
+              <table class="fragment">
+              <thead>
+                <tr>
+                  <th>项目</th>
+                  <th>中型数据中心成本</th>
+                  <th>特大型数据中心成本</th>
+                  <th>比率</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>网络</td>
+                  <td>$95每Mb/秒/月</td>
+                  <td>$13每Mb/秒/月</td>
+                  <td>7.3</td>
+                </tr>
+                <tr>
+                  <td>存储</td>
+                  <td>$2.20每GB/月</td>
+                  <td>$0.40每GB/月</td>
+                  <td>5.7</td>
+                </tr>
+                <tr>
+                  <td>管理</td>
+                  <td>每个管理员约管理140个服务器</td>
+                  <td>每个管理员管理1000个服务器以上</td>
+                  <td>7.1</td>
+                </tr>
+              </tbody>
+              </table>
+              <p class="fragment">
+                更大型的数据中心服务器的数量级可以达到几十万、百万甚至千万级别。运营成本将进一步降低。
+              </p>
+            </div>
+          </div>
+        </section> <!-- management-cost -->
+
+        <section id="power-cost">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">美国不同地区电力价格的差异</h1>
+            </div>
+            <div class="content">
+              <table>
+              <thead>
+                <tr>
+                  <th>价格</th>
+                  <th>地点</th>
+                  <th>可能的定价原因</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>3.6美分</td>
+                  <td>爱达荷州</td>
+                  <td>水力发电，没有长途输送</td>
+                </tr>
+                <tr>
+                  <td>10.0美分</td>
+                  <td>加州</td>
+                  <td>电力在电网上长途输送，湾区的输送线有限，加州不允许煤电</td>
+                </tr>
+                <tr>
+                  <td>18.0美分</td>
+                  <td>夏威夷</td>
+                  <td>发电的能源需要海运到岛上</td>
+                </tr>
+              </tbody>
+              </table>
+              <p class="fragment">很多企业选择将数据中心建设在电价便宜的地方</p>
+              <p class="fragment">甚至将业务在多个数据中心轮转，利用季节电价</p>
+            </div>
+          </div>
+        </section> <!-- power-cost -->
+
+        <section id="utilization" data-fragment-order="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">资源利用率</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack">
+                <div class="fragment fade-out" data-fragment-after="last">
+                  <p class="fragment">
+                    典型的网站资源利用率：
+                  </p>
+                  <div class="r-stack fragment" data-fragment-id="last">
+                    <img class="animated slideInLeft" src="img/chapter001/web-utilization.png">
+                  </div>
+                </div>
+                <div class="full-size">
+                  <p class="fragment">
+                    普通企业如何建设机房？
+                  </p>
+                  <ul>
+                    <li class="fragment">如果企业按峰值业务量配置机房：</li>
+                    <li class="fragment">如果企业按评论业务量配置机房：</li>
+                  </ul>
+                  <p class="fragment">
+                    云计算：
+                  </p>
+                  <ul>
+                    <li class="fragment">平台规模大</li>
+                    <li class="fragment">租户多</li>
+                    <li class="fragment">业务种类五花八门</li>
+                    <li class="fragment">统计复用</li>
+                    <li class="fragment">利用率可达80%左右</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- utilization -->
+
+        <section id="cost-advantage">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">巨大的成本优势</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated tada" src="img/chapter001/cost-advantage.png">
+              </div>
+              <p class="fragment">
+                成本优势主要来源于其庞大的规模
+              </p>
+            </div>
+          </div>
+        </section> <!-- cost-advantage -->
+
+        <section id="summary">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">总结</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">云计算将计算变成了大众用得上和用得起的“水和电”</p>
+              <p class="fragment">普通企业不用采购硬件，不用开发和安装软件</p>
+              <p class="fragment">可以快速部署业务</p>
+              <p class="fragment">可以跟随客户和业务规模动态调整，伸缩系统规模</p>
+              <p class="fragment">可以方便地共享数据</p>
+              <p class="fragment">普通用户无需自建机房，申请账号付费即可使用服务</p>
+              <p class="fragment">……</p>
+            </div>
+          </div>
+        </section> <!-- summary -->
+
+        <section id="thank-you-slide" class="end color--radiant">
+        </section>
+
+      </div> <!-- slides -->
+    </div> <!-- reveal -->
+
+    <!-- ******** scripts ******** -->
+
+    <!-- post-libraries -->
+
+		<script>
+      language = 'cn';
+
+      var myConfig = {
+        "math": math, 
+        "asciinema": {
+          rows: 24,
+          cols: 81
+        }
+      };
+
+      defineMyPlugins = function() {
+        myPreloadPlugins = [
+          /**** my plugins ****/
+          RevealLoadCode, RevealFragmentOrder,
+        ];
+        myPlugins = [
+          /**** built-in plugins ****/
+          /**** third-party plugins ****/
+          /**** my plugins ****/
+          RevealCodeTips, RevealFragmentGroup,
+        ];
+      }
+		</script>
+    <script src="js/common.js"></script>
+
+	</body>
+</html>

@@ -1,0 +1,314 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>temp</title>
+
+    <link rel="stylesheet" href="css/include.css" media="all">
+
+    <!-- pre-libraries -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+
+    <script src="js/define.js"></script>
+  </head>
+  <body>
+    <div class="reveal pattern--random">
+      <div class="slides">
+
+        <script>
+          courseName = "云计算";
+          chapterName = "第七章 云计算数据中心";
+          toc = [
+            {name: "数据中心概况", desc: ""},
+            {name: "改进型树结构数据中心", desc: ""},
+            {name: "递归层次数据中心", desc: ""},
+            {name: "光交换数据中心", desc: ""},
+          ];
+        </script>
+
+        <section class="cover" id="cover"></section>
+
+        <section class="toc color--midnight" id="toc"></section>
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="data-center-and-cloud">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">数据中心对云计算的支持</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">数据中心是云计算背后最大的功臣。</p>
+              <p class="fragment">云计算当中资源之所以可以伸缩主要是因为数据中心可以整合那么多的资源。</p>
+              <p class="fragment">Facebook、谷歌、亚马逊、微软等在多地建立了自己的大规模数据中心</p>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter007/data-center.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- data-center-and-cloud -->
+        
+        <section id="data-center-characteristics">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">数据中心的特征</h1>
+            </div>
+            <div class="content">
+<p class="fragment">高设备利用率</p>
+<p class="fragment">采用虚拟化技术进行系统和数据中心整合,优化资源利用率、简化管理</p>
+<p class="fragment">绿色节能</p>
+<p class="fragment">通过先进的供电和散热技术，降低数据中心的能耗</p>
+<p class="fragment">高可用性</p>
+<p class="fragment">提供了大量的同质化设备和替代恢复机制，确保资源的可用性和数据的持久性</p>
+<p class="fragment">自动化管理</p>
+<p class="fragment">云数据中心应是24×7小时无人值守并可远程管理的。</p>
+            </div>
+          </div>
+        </section> <!-- data-center-characteristics -->
+
+        <section id="traditional-data-center">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">传统数据中心</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter007/traditional-data-center.png" alt="">
+            </div>
+          </div>
+        </section> <!-- traditional-data-center -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="fat-tree">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FatTree</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter007/fat-tree.png" alt="">
+            </div>
+          </div>
+        </section> <!-- fat-tree -->
+
+        <section id="fat-tree-features">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FatTree的特点</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  与传统层次结构相比， FatTree结构有如下特点：
+</p>
+<ul>
+  <li class="fragment">消除了树形结构上层链路对吞吐量的限制，所有交换机配置均相同</li>
+  <li class="fragment">为内部节点间通信提供多条并行链路</li>
+  <li class="fragment">横向扩展的尝试降低了构建数据中心网络的成本</li>
+  <li class="fragment">与现有数据中心网络使用的以太网结构和IP 配置的服务器兼容</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- fat-tree-features -->
+
+        <section id="fat-tree-calculation">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FatTree的计算</h1>
+            </div>
+            <div class="content">
+<p class="fragment">基本原则：所有交换机只有k个端口。</p>
+<p class="fragment">因此核心层交换机（树根）只有k个出口。每个核心层交换机和一个Pod相连，因此，FatTree为一棵k叉树，则有k个Pod。</p>
+<p class="fragment">看每一个Pod，其接入层和汇聚层交换机由一半的端口(k/2)完全互联，因此，每个pod共有k个交换机，其中(k/2)个是接入交换机，k/2个是汇聚交换机。</p>
+<p class="fragment">每个接入交换机有(k/2)个连接到主机端，因此主机数为：(k/2)*(k/2)*k</p>
+<p class="fragment">同样每个汇聚交换机的另外(k/2)个连接到核心交换机，这样就有（k/2)*(k/2)个核心交换机。</p>
+            </div>
+          </div>
+        </section> <!-- fat-tree-calculation -->
+
+        <section id="vl2">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">改进型树结构-VL2</h1>
+            </div>
+            <div class="content">
+<p class="fragment">微软数据中心采用了VL2架构，VL2是一套可扩展并十分灵活的网络架构。</p>
+<p class="fragment">负载均衡将流量统一的分配到网络路径。</p>
+<p class="fragment">终端系统的地址解析拓展到巨大的服务器池。</p>
+<p class="fragment">核心思想：使用CLOS拓扑结构建立扁平的第二层网络。</p>
+<p class="fragment">在VL2的体系结构中，应用程序使用服务地址通信而底层网络使用位置信息地址进行转发，这使得虚拟机能在网络中任意迁移而影响服务质量。</p>
+            </div>
+          </div>
+        </section> <!-- vl2 -->
+
+        <section id="vl2-topology">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">VL2的拓扑</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  VL2仍然采用三层拓扑结构进行交换机级联。但不同的是，VL2中的各级交换机之间都采用10Gbps端口以减小布线开销。
+</p>
+              <img src="img/chapter007/vl3-topology.png" alt="">
+            </div>
+          </div>
+        </section> <!-- vl2-topology -->
+
+        <section id="vl2-features">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">VL2特性</h1>
+            </div>
+            <div class="content">
+<p class="fragment">在VL2中，IP地址仅仅作为名字使用，没有拓扑含义。</p>
+<p class="fragment">VL2的寻址机制将服务器的名字与其位置分开。</p>
+<p class="fragment">VL2使用可扩展、可靠的目录系统来维持名字和位置间的映射。</p>
+<p class="fragment">当服务器发送分组时，服务器上的VL2代理开启目录系统以得到实际的目的位置，然后将分组发送到目的地。</p>
+<p class="fragment">VL2是目前最易用于对现有数据中心网络改造的结构，但VL2依赖于中心化的基础设施来实现2层语义和资源整合，面临单点失效和扩展性问题。</p>
+            </div>
+          </div>
+        </section> <!-- vl2-features -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="dcell">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">DCell结构</h1>
+            </div>
+            <div class="content">
+<p class="fragment">特性1：构建高层次网络时，需要的低层网络的个数等于每个低层网络中的服务器个数加1。</p>
+<p class="fragment">特性2：服务器参与数据的交换。</p>
+<img src="img/chapter007/dcell-topology.png" alt="">
+            </div>
+          </div>
+        </section> <!-- dcell -->
+
+        <section id="dcell-calculation">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">DCell结构的计算</h1>
+            </div>
+            <div class="content">
+<p class="fragment">一个具有n,k为参数的Dcell数据中心有多少台服务器，多少台路由器？</p>
+<p class="fragment">构建高层次网络时，需要的低层网络的个数等于每个低层网络中的服务器个数加1。</p>
+<p class="fragment">第0层需要的交换机个数为1，服务器个数为n</p>
+<p class="fragment">第1层有n+1个零层单元：交换机个数为(n+1)*1，服务器个数为(n+1)*n</p>
+<p class="fragment">第2层有(n+1)*n+1个1单元：交换机个数为((n+1)*n+1)*(n+1)*n，服务器个数为((n+1)*n+1)*((n+1)*n)</p>
+            </div>
+          </div>
+        </section> <!-- dcell-calculation -->
+
+        <section id="bcube">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">BCube结构</h1>
+            </div>
+            <div class="content">
+<p class="fragment">BCube使用交换机构建层次化网络，和DCell非常相似，BCube也使用递归构建。</p>
+<p class="fragment">BCube0，是基本单元，由1个交换机和n个服务器相连。</p>
+<p class="fragment">BCube1，以n个BCube0为基础构建，使用n个交换机相连。</p>
+<p class="fragment">往后每一层都以n个交换机连接n个下一级单元。</p>
+            </div>
+          </div>
+        </section> <!-- bcube -->
+
+        <section id="bcube-calculation">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">BCube的计算</h1>
+            </div>
+            <div class="content">
+<p class="fragment">一个具有n,k为参数的BCube数据中心有多少台服务器，多少台路由器？</p>
+<p class="fragment">交换机端口都相同为n，每一层都需要n个低一层为基本单元，由n个交换机相连</p>
+<p class="fragment">第0层需要的交换机个数为1，服务器个数为n</p>
+<p class="fragment">第1层有n个零层单元：交换机个数为n+n*1，服务器个数为n*n</p>
+<p class="fragment">第2层有n个1层单元：交换机个数为n+n*(n+n*1)，服务器个数为n*n*n</p>
+<p class="fragment">第k层有n个k-1层单元：交换机个数(k+1)*nk，服务器个数：nk+1</p>            </div>
+          </div>
+        </section> <!-- bcube-calculation -->
+
+        <section id="ficonn">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">FiConn结构</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter007/ficonn.png" alt="">
+            </div>
+          </div>
+        </section> <!-- ficonn -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="helios">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">光交换数据中心Helios</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter007/helios.png" alt="">
+            </div>
+          </div>
+        </section> <!-- helios -->
+
+        <section id="osa">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">光交换数据中心OSA</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter007/osa.png" alt="">
+            </div>
+          </div>
+        </section> <!-- osa -->
+
+        <section id="thank-you-slide" class="end color--radiant"></section>
+
+      </div> <!-- slides -->
+    </div> <!-- reveal -->
+
+    <script>
+      language = 'cn';
+
+      var myConfig = {
+        "math": math, 
+        "asciinema": {
+          rows: 24,
+          cols: 81
+        }
+      };
+
+      defineMyPlugins = function() {
+        myPreloadPlugins = [
+          /**** my plugins ****/
+          RevealLoadCode, RevealFragmentOrder,
+        ];
+        myPlugins = [
+          /**** built-in plugins ****/
+          /**** third-party plugins ****/
+          /**** my plugins ****/
+          RevealCodeTips, RevealFragmentGroup,
+        ];
+      };
+    </script>
+    <script src="js/common.js"></script>
+  </body>
+</html>

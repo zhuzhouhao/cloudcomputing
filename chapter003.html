@@ -1,0 +1,2281 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>云计算 第三章</title>
+
+    <link rel="stylesheet" href="css/include.css" media="all">
+
+    <!-- pre-libraries -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+
+    <script src="js/define.js"></script>
+	</head>
+	<body>
+		<div class="reveal pattern--random">
+			<div class="slides">
+
+        <script>
+          courseName = "云计算";
+          chapterName = "第三章 集群技术";
+          toc = [
+            {name: "集群技术概述", desc: ""},
+            {name: "Nginx简介", desc: ""},
+            {name: "负载均衡技术", desc: ""},
+            {name: "高可用技术", desc: ""},
+            {name: "网站动静分离", desc: ""},
+            {name: "session保持", desc: ""},
+            {name: "文件共享", desc: ""},
+            {name: "磁盘阵列技术", desc: ""},
+          ];
+        </script>
+
+        <section class="cover" id="cover">
+        </section>
+
+				<section class="toc color--midnight" id="toc">
+				</section>
+
+				<section class="subsection color--radiant">
+				</section>
+
+        <section id="what-is-cluster">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">什么是集群</h1>
+						</div>
+						<div class="content">
+              <div class="r-fit-text">究竟什么是集群？</div>
+              <p class="fragment">
+                <b>定义</b>：集群(Cluster)是一组<span class="fragment highlight-red">相互独立</span>的、通过高速<span class="fragment highlight-red">网络互联</span>的计算机，它们构成了一个组，并以<span class="fragment highlight-red">单一系统</span>的模式加以管理。
+              </p>
+              <p class="fragment">
+                <b>集群的特性</b>：当一个用户与集群相互作用时，集群像是一个<span class="fragment highlight-red">独立</span>的服务器。
+              </p>
+            </div>
+					</div>
+				</section>
+
+				<section id="why-use-cluster" data-auto-animate>
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">为什么要使用集群</h1>
+						</div>
+						<div class="content">
+              <p class="fragment">
+                一般来说，建立集群的目的主要有以下几个：
+              </p>
+              <ul>
+                <li class="fragment">提高性能
+                </li>
+                <li class="fragment">降低成本</li>
+                <li class="fragment">提高可扩展性</li>
+                <li class="fragment">增强可靠性</li>
+              </ul>
+            </div>
+					</div>
+				</section>
+
+        <section id="why-use-cluster2" data-auto-animate data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">为什么要使用集群</h1>
+            </div>
+            <div class="content">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group1">提高性能
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group2"  data-fragment-with="group1">降低成本
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group3"  data-fragment-with="group2">提高可扩展性
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group4" data-fragment-with="group3">增强可靠性
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack" style="margin-top: 50px;">
+                <div class="fragment full-size fade-out" data-fragment-id="group1" data-fragment-after="group1-last">
+                  <p class="fragment">很多时候一台服务器并无法满足大量用户的访问</p>
+                  <p class="fragment">可以考虑通过多台服务器来提供服务</p>
+                  <p class="fragment">计算密集型应用，集中几十台甚至上百台计算机的运算能力来满足要求</p>
+                  <p class="fragment" data-fragment-id="group1-last">但要让不同的用户访问不同的服务器地址，实施过程太复杂</p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="group2" data-fragment-after="group2-last">
+                  <p class="fragment">传统技术中，为了提供运算速率，工程师总是试图提高服务器的性能</p>
+                  <p class="fragment">巨型机的制作非常复杂，代价较高，甚至已经到达了物理极限</p>
+                  <p class="fragment">谷歌曾尝试使用大量的微型服务器互联来提供计算服务，并取得了很好的结果</p>
+                  <p class="fragment" data-fragment-id="group2-last">采用计算机集群比采用同等运算能力的大型计算机具有更高的性价比 </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="group3" data-fragment-after="group3-last">
+                  <p class="fragment">当业务扩展时，传统技术只能通过升级服务器来提高服务效率</p>
+                  <p class="fragment">然而，更换或升级服务器的代价太大，并且过程是中断式的</p>
+                  <p class="fragment">若使用大量的服务器来组成集群，则可以根据情况添加或减少集群中的服务器数量</p>
+                  <p class="fragment" data-fragment-id="group3-last">
+                  只需要将新的服务器加入集群中即可，对于客户来看，好像系统在不知不觉中完成了升级
+                  </p>
+                </div>
+                <div class="full-size">
+                  <p class="fragment">集群的一个显著特点是所有服务器都做同一件事情</p>
+                  <p class="fragment">由于集群中存在大量的服务器，任意服务器出现故障，可以由其他服务器接替工作</p>
+                  <p class="fragment">因此，集群技术使系统在故障发生时仍可以继续工作，将系统停运时间减到最小</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- why-use-cluster2 -->
+
+        <section id="cluster-achitectures">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">集群的组织方式</h1>
+            </div>
+            <div class="content">
+              <ul>
+                <li class="fragment"><b>主从结构</b>
+                  <p class="fragment">将备份服务器连接到主服务器上</p>
+                  <p class="fragment">备份服务器一般不主动提供服务</p>
+                  <p class="fragment">一旦主服务器发生故障，备份服务器才开始提供服务</p>
+                </li>
+                <li class="fragment"><b>多机结构</b>
+                  <p class="fragment">由多台服务器组成的集群服务器，他们对外有一个统一的地址，每台集群服务器上都装有相同的应用程序</p>
+                  <p class="fragment">由一个负载均衡器来分配在哪台服务器上进行操作</p>
+                  <p class="fragment">各个集群服务器之间是相互通信的，一旦发生故障，可以自动转移到其他服务器</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- cluster-achitectures -->
+
+        <section id="cluster-shortcomings">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">集群的缺点</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">如果运行应用的服务器出现故障，其它的某台服务器会启动这个应用，进而使应用重新正常运转。</p>
+              <p class="fragment">一般接管过程大体需要三个步骤：<span class="fragment highlight-red">侦测</span>并确认故障、后备服务器<span class="fragment highlight-red">启动</span>该应用、<span class="fragment highlight-red">接管</span>共享的数据区。</p>
+              <p class="fragment">在切换的过程中需要<span class="fragment highlight-red">花费一定的时间</span>，原则上根据应用的大小不同切换的时间也会不同，越大的应用切换的时间越长。</p>
+            </div>
+          </div>
+        </section> <!-- cluster-shortcomings -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="nginx-services">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Nginx提供的服务</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                Nginx主要提供以下服务：
+              </p>
+              <ul>
+                <li class="fragment">静态文件，索引文件以及自动索引</li>
+                <li class="fragment">反向代理加速，简单的负载均衡和容错；</li>
+                <li class="fragment">FastCGI，简单的负载均衡和容错；</li>
+                <li class="fragment">模块化的结构，大量的功能模块</li>
+                <li class="fragment">SSL 和 TLS SNI 支持，足够的安全性</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!--  -->
+
+        <section id="ngin-config">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Nginx配置文件</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">在CentOS中，如果直接使用yum源安装，Nginx的配置文件主要在/etc/nginx/路径中</p>
+              <p class="fragment">其中主配置文件名为nginx.conf，是一个纯文本文件</p>
+              <p class="fragment">备份文件nginx.conf.default主要是提供一个默认配置，万一配置过程中出错还可以通过该文件还原到最初版本</p>
+              <pre class="fragment"><code class="lang-cpp" data-code="code/chapter003/nginx.conf" data-line-numbers="">
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- ngin-config -->
+
+        <section id="nginx-commands">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">常用命令</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">检查配置文件语法：nginx t</p>
+              <p class="fragment">期待结果：</p>
+              <p class="fragment">syntax ls ok</p>
+              <p class="fragment">test is successful</p>
+              <p class="fragment">启动Nginx：systemctl start nginx</p>
+              <p class="fragment">关闭Nginx：systemctl stop nginx</p>
+              <p class="fragment">开机启动Nginx：systemctl enable nginx</p>
+              <p class="fragment">取消开机启动Nginx：systemctl disable nginx</p>
+              <p class="fragment">
+                重启Nginx：
+              </p>
+              <ul>
+                <li class="fragment">systemctl restart nginx</li>
+                <li class="fragment">nginx s reload</li>
+              </ul>
+              <p class="fragment">检查Nginx进程：ps aux | grep nginx</p>
+              <p class="fragment">检查端口：</p>
+              <ul>
+                <li class="fragment">netstat lntp | grep 80</li>
+                <li class="fragment">netstat lntp | grep nginx</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- nginx-commands -->
+
+        <section id="config-nginx">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：配置Nginx Web服务</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "config-nginx",
+                  url: "video/chapter003/配置NginxWeb服务_batch.mp4",
+                  pauses: [0, 16.666667, 27.389, 48.351503, 67.842494, 90.052682, 102.112352, 110.629339, 114.745468, 120.879862, 124.047646, 135.5, 148.925111, 160.299418, 161.353094, 303.679466, 312.07384, 330.052994, 350.589904]
+                });
+              </script>
+              <div id="config-nginx-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- config-nginx -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="why-nginx-load-balance">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">为什么需要负载均衡</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                问题：若由于业务增长，一台服务器无法支撑起整个用户访问，如何进行扩展？
+              </p>
+              <p class="fragment">
+                向老板申请，换性能更强的服务器？
+              </p>
+              <p class="fragment">
+                我们可以用多台服务器提供服务，但问题是什么？
+              </p>
+              <p class="fragment">集群？</p>
+              <p class="fragment">负载均衡？</p>
+              <p class="fragment">
+                Why？
+              </p>
+            </div>
+          </div>
+        </section> <!-- why-nginx-load-balance -->
+
+        <section id="load-balance-function">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">负载均衡的作用</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">把单台计算机无法承受的大规模并发访间或数据流批分担到多台节点设备上，分别进行处理，减少用户等待响应的时间，提升用户体验。</p>
+              <p class="fragment">7 X 24 小时的服务保证，任意一个或多个有限节点设备宕机，不能影响业务。</p>
+            </div>
+          </div>
+        </section> <!-- load-balance-function -->
+
+        <section id="load-balance-topology">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Web集群的负载均衡架构</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" style="height: 600px;" src="img/chapter003/load-balance.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- load-balance-topology -->
+
+        <section id="load-balance-choices" data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">常见的负载均衡方案</h1>
+            </div>
+            <div class="content">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group1">
+                    硬件方案
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group2" data-fragment-after="group1">
+                    软件方案
+                  </span>
+                </li>
+              </ul>
+              <hr>
+
+              <div class="r-stack" style="margin-top: 50px;">
+                <div class="r-stack fragment full-size fade-out" data-fragment-id="group1" data-fragment-after="group1-last">
+                  <div class="r-stack fragment">
+                    <div class="animated slideInLeft">
+                      <div class="fragment fade-out">
+                        <img src="img/chapter003/f5.png" style="margin-bottom: 0px"><br/>
+                        <p style="text-align: center;">F5</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="r-stack fragment">
+                    <div class="animated slideInLeft">
+                      <div class="fragment fade-out">
+                        <img src="img/chapter003/netscaler.png" style="margin-bottom: 0px"><br/>
+                        <p style="text-align: center;">NetScaler</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="r-stack fragment">
+                    <div class="animated slideInLeft">
+                      <div class="fragment fade-out">
+                        <img src="img/chapter003/RadWare.png" style="margin-bottom: 0px"><br/>
+                        <p style="text-align: center;">RadWare</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="r-stack fragment">
+                    <div class="animated slideInLeft">
+                      <div class="fragment fade-out">
+                        <img src="img/chapter003/a10.png" style="margin-bottom: 0px"><br/>
+                        <p style="text-align: center;">A10</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="fragment" data-fragment-id="group1-last">
+                    <div class="animated zoomIn" style="font-size: 280px; color: red;">
+                      贵
+                    </div>
+                  </div>
+                </div>
+
+                <div class="r-stack full-size">
+                  <div class="r-stack fragment">
+                    <div class="animated slideInLeft">
+                      <div class="fragment fade-out">
+                        <img src="img/chapter003/lvs.png" style="margin-bottom: 0px"><br/>
+                        <p style="text-align: center;">LVS</p>
+                        <p style="text-align: center;">(4层)</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="r-stack fragment">
+                    <div class="animated slideInLeft">
+                      <div class="fragment fade-out">
+                        <img src="img/chapter003/nginx.png" style="margin-bottom: 0px"><br/>
+                        <p style="text-align: center;">Nginx和Nginx+</p>
+                        <p style="text-align: center;">(7层)</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="r-stack fragment">
+                    <div class="animated slideInLeft">
+                      <div class="fragment fade-out">
+                        <img src="img/chapter003/haproxy.png" style="margin-bottom: 0px"><br/>
+                        <p style="text-align: center;">Haproxy</p>
+                        <p style="text-align: center;">(4层和7层)</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="r-stack fragment">
+                    <div class="animated zoomInDown">
+                      <img src="img/chapter003/nginx-songle.png" style="margin-bottom: 0px"><br/>
+                      <p style="text-align: center;">Nginx</p>
+                      <p style="text-align: center;">流行解决方案</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section> <!-- load-balance-choices --> 
+
+        <section id="nginx-load-balance-theory">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Nginx负载均衡的实质</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">Nginx仅仅是作为Nginx Proxy<span class="fragment highlight-red">反向代理</span>使用的</p>
+              <p class="fragment">但我们把这个反向代理配置得表现的效果是负载均衡集群的效果，所以称之为负载均衡</p>
+              <p class="fragment">
+                真正负载均衡是转发用户请求的数据包，而Nginx反向代理是接收用户的请求然后重新发起请求去请求其后面的节点。
+              </p>
+              <p class="fragment">
+                在节点服务器看来，访问的节点服务器的客户端用户就是反向代理服务器了，而非真实的网站访问用户。
+              </p>
+            </div>
+          </div>
+        </section> <!-- nginx-load-balance-theory -->
+
+        <section id="nginx-load-balance-config">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">负载均衡配置</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                Nginx的负载均衡配置需要使用upstream和proxy两个模块
+              </p>
+              <p class="fragment">
+                主要在nginx.conf文件中进行配置
+              </p>
+              <p class="fragment">
+                在http段中，server段之前添加upstream模块配置：
+              </p>
+              <pre class="fragment"><code class="lang-nginx" data-line-numbers="">
+                <script type="text/template">
+http {
+  ...
+  upstream www_servers_pool {
+    server 192.168.0.11;
+    server 192.168.0.12;
+  }
+  ...
+}
+                </script>
+              </code></pre>
+              <p class="fragment">
+                在server段中配置：
+              </p>
+              <pre class="fragment"><code class="lang-nginx" data-line-numbers="">
+                <script type="text/template">
+server {
+  ...
+	location / {
+		proxy__pass http://www_servers_pool;
+	}
+  ...
+}
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- nginx-load-balance-config -->
+
+        <section id="load-balance-config">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">实现负载均衡</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "nginx-load-balance",
+                  url: "video/chapter003/配置Nginx负载均衡_batch.mp4",
+                  pauses: [0, 0.625, 10.29821, 13.416667, 30.575423, 34.023162, 42.7677, 47.599738, 54.968994, 85.687409, 93.07634, 107.240199, 114.249139, 121.426221, 126.549156, 130.36607, 139.086084, 178.912509, 217.314493]
+                });
+              </script>
+              <div id="nginx-load-balance-video-fragment-container"></div>
+              </div>
+          </div>
+        </section> <!-- load-balance-config -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="load-balance-problem">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">当前系统的问题</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">使用了Web集群和负载均衡技术，我们可以动态地向集群中添加Web服务器，实现容量的动态扩展</p>
+              <p class="fragment">还有什么问题吗？</p>
+              <p class="fragment">目前负载均衡器成为了单点故障的瓶颈，如何获得高可用性？</p>
+              
+              <p class="fragment">
+                为负载均衡器加入备份节点，形成主从结构，提高整个系统的可用性
+              </p>
+              <p class="fragment">
+                保证系统在任何故障情况下仍可长期可以提供服务的方式一般被称为<b>高可用</b>（HA, high availability）。
+              </p>
+            </div>
+          </div>
+        </section> <!--  -->
+
+        <section id="ha-solutions">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">高可用方案</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">在多台机器上运行的冗余节点和服务来相互跟踪，</p>
+              <p class="fragment">在集群中任意一个节点失效的情况下，该节点上的所有任务会自动转移到其他正常的节点上，</p>
+              <p class="fragment">替补者将在几秒钟或更短时间内接管它的职责。</p>
+              <p class="fragment">常用于不易实现负载均衡的应用，比如负载均衡器，主数据库、主存储对之间。</p>
+              <p class="fragment">常见的高可用方案：<span class="fragment highlight-red">keepalived</span>, heartbeat。</p>
+            </div>
+          </div>
+        </section> <!-- ha-solutions -->
+
+        <section id="vrrp">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">VRRP协议</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">keepalived和Nginx配合比较好，利用VRRP协议来保证高可用。</p>
+              <p class="fragment">VRRP 是Virtual Router Redundancy Protocol （ 虚拟路由器冗余协议）的缩写，
+                VRRP出现的目的最早是为了解决静态路由单点故障问题的，它能够保证当个别节点宕机时， 而整个网络可以不间断地运行。</p>
+              <p class="fragment">VRRP 是通过一种竞选机制来将路由的任务交给某台VRRP路由器的。</p>
+              <p class="fragment">VRRP用IP多播的方式使用默认多播地址(224.0.0.18 )实现高可用对之间通信。</p>
+              <p class="fragment">工作时主节点发包，备节点接包，当备节点接收不到主节点发的数据包的时候，就启动接管程序接管主节点的资源。备节点可以有多个，通过优先级竞选，但一般Keepalived 系统运维工作中都是一对。</p>
+              <p class="fragment">VRRP 使用了加密协议加密数据，但Keepalived 官方目前还是推荐用明文的方式配置认证类型和密码。</p>
+            </div>
+          </div>
+        </section> <!-- vrrp -->
+
+        <section id="keepalived">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Keepalived</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">Keepalived<span class="fragment highlight-red">高可用对</span>之间通过VRRP进行通信。</p>
+              <p class="fragment">在Keepalived服务对之间，只有作为<span class="fragment highlight-red">主服务器</span>的一方会一直发送VRRP广播包，告诉备设备它还活着。</p>
+              <p class="fragment">备设备处于监听状态，若仍能监听到主设备的广播，则备设备不会抢占主</p>
+              <p class="fragment">当主不可用时，即备监听不到主发送的广播包时，备设备就会启动相关服务接管资源，保证业务的连续性。</p>
+              <p class="fragment">接管速度最快可以小于1 秒。</p>
+            </div>
+          </div>
+        </section> <!-- keepalived -->
+
+        <section id="ha-topology">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">高可用逻辑架构图</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter003/ha-topology.png" style="height: 600px;">
+              </div>
+            </div>
+          </div>
+        </section> <!-- ha-topology -->
+
+        <section id="keepalived-config">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">keepalived配置</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">如果从CentOS的默认yum源中安装软件，则默认配置文件位于/etc/keepalived/目录下</p>
+              <p class="fragment">主配置文件仅一个文件：keepalived.conf，是纯文本文件</p>
+              <pre class="fragment"><code class="lang-shell" style="max-height: 500px;" data-code="code/chapter003/keepalived.conf" data-line-numbers="">
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- keepalived-config -->
+
+        <section id="keepalived-config-show">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：配置keepalived</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "keepalived-config",
+                  url: "video/chapter003/配置keepalived高可用_batch.mp4",
+                  pauses: [0, 1.052994, 7.833333, 17.803819, 62.01295, 156.178255, 167.691491, 176.222428, 183.123967, 184.743258, 191.165351, 208.589611, 223.767663, 248.97031, 273.879068, 295.710772, 296.563691, 302.767256, 309.916126, 353.961948, 378.281439, 480.551002, 486.840775]
+                });
+              </script>
+              <div id="keepalived-config-video-fragment-container"></div>
+              </div>
+          </div>
+        </section> <!-- keepalived-config-show -->
+
+        <section id="keepalived-problem">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Keepalived所存在的问题</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">我们已经通过搭建负载均衡集群来实现虚拟IP的自动迁移，似乎已经达到高可用的目的。当前系统还存在什么问题吗？</p>
+              <p class="fragment">如果只是Nginx负载均衡软件出现问题，而Keepalived软件本身运行良好，会如何呢？</p>
+            </div>
+          </div>
+        </section> <!-- keepalived-problem -->
+
+        <section id="keepalived-problem-show">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示Keepalived并不监测服务</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "keepalived-problem",
+                  url: "video/chapter003/Nginx失效Keepalived有效_batch.mp4",
+                  pauses: [0, 1.554649, 54.193453, 72.873488, 97.624223, 103.677003]
+                });
+              </script>
+              <div id="keepalived-problem-video-fragment-container"></div>
+              </div>
+          </div>
+        </section> <!-- keepalived-problem-show -->
+
+        <section id="keepalived-problem-result">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">结论</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">如果只是Nginx负载均衡软件出现问题，而Keepalived软件本身运行良好，虚拟IP并不会自动迁移</p>
+              <p class="fragment">说明虚拟IP的迁移只监测Keepalived服务是否开启，即是否还能发送VRRP报文</p>
+              <p class="fragment">如何使服务失效的时候，主从自动切换？</p>
+              <p class="fragment">自己写监测脚本</p>
+            </div>
+          </div>
+        </section> <!-- keepalived-problem-result -->
+
+        <section id="shell-script" data-auto-animate data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">常用的shell命令</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                监测脚本一般使用Shell脚本完成，在监测脚本中一共会用到以下命令：
+              </p>
+              <ul>
+                <li class="fragment">netstat</li>
+                <li class="fragment">grep</li>
+                <li class="fragment">wc</li>
+                <li class="fragment">exit</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- shell-script -->
+
+        <section id="shell-script2" data-auto-animate data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">常用的shell命令</h1>
+            </div>
+            <div class="content">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group1">netstat
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group2" data-fragment-after="group1">grep
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group3" data-fragment-after="group2">wc
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group4" data-fragment-after="group3">exit
+                  </span>
+                </li>
+              </ul>
+              <hr>
+
+              <div class="r-stack" style="margin-top: 50px;">
+                <div class="fragment full-size fade-out" data-fragment-id="group1" data-fragment-after="group1-last">
+                  <p class="fragment">netstat 命令用于显示网络状态。常用的参数有：</p>
+                  <p class="fragment">-l或--listening：显示监控中的服务器的Socket。-n或--numeric 直接使用IP地址，而不通过域名服务器。</p>
+                  <p class="fragment">-t或--tcp 显示TCP传输协议的连线状况。</p>
+                  <p class="fragment" data-fragment-id="group1-last">
+                    -p或--programs 显示正在使用Socket的程序识别码和程序名称。
+                  </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="group2" data-fragment-after="group2-last">
+                  <p class="fragment">grep（global search regular expression(RE) and print out the line，全面搜索正则表达式并把行打印出来）是一种强大的文本搜索工具</p>
+                  <p class="fragment">它能使用正则表达式搜索文本，把含有参数字符串的行打输出</p>
+                  <p class="fragment" data-fragment-id="group2-last">
+                    它和管道（|）组合可以查找前面命令中的输出结果
+                  </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="group3" data-fragment-after="group3-last">
+                  <p class="fragment">wc命令用来计算数字。</p>
+                  <p class="fragment">利用wc指令我们可以计算文件的字节数、字数或是行数，</p>
+                  <p class="fragment">若不指定文件名称，或是所给予的文件名为“-”，则wc指令会从标准输入设备读取数据。</p>
+                  <p class="fragment" data-fragment-id="group3-last">
+                    常用的参数为：-l或--lines：只显示行数；
+                  </p>
+                </div>
+                <p class="fragment fade-in-then-out fill-size">
+                  exit命令用作脚本的返回值，一般作为其他脚本或程序判断脚本的执行情况
+                </p>
+              </div>
+            </div>
+          </div>
+        </section> <!-- shell-script -->
+
+        <section id="shell-script-nginx">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：使用shell脚本判断nginx是否启动</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "shell-check-nginx",
+                  url: "video/chapter003/Shell脚本检测Nginx服务_batch.mp4",
+                  pauses: [0, 4.458333, 16.468437, 32.193607, 43.553333, 55.321405, 62.862796, 68.624, 85.105793, 123.332755, 129.66603]
+                });
+              </script>
+              <div id="shell-check-nginx-video-fragment-container"></div>
+              </div>
+          </div>
+        </section> <!-- shell-script-nginx -->
+
+        <section id="check-nginx-keepalived">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">在keepalived中配置监测脚本</h1>
+            </div>
+            <div class="content">
+              <form class="tab-container full-height">
+                <input type="radio" name="tab" class="tab-1" checked><span>check-nginx.sh</span>
+                <input type="radio" name="tab" class="tab-2"><span>keepalived.conf</span>
+                <div class="tab-content-1">
+                  <pre><code class="lang-shell" style="max-height: 700px;" data-line-numbers="">
+                    <script type="text/template">
+#!/bin/bash
+if [ `netstat lntp | grep nginx | wc l` -lt 1 ]; then
+	systemctl stop keepalived
+fi
+                    </script>
+                  </code></pre>
+                </div>
+                <div class="tab-content-2">
+                  <pre><code class="lang-shell" style="max-height: 700px;" data-line-numbers="">
+                    <script type="text/template">
+vrrp_script check_nginx { 
+	script "/root/bin/check_nginx.sh"
+	interval 2
+}
+
+vrrp_instance VI_1 {
+  ...
+	track_script {
+		check_nginx
+	}
+}
+                    </script>
+                  </code></pre>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section> <!-- check-nginx-keepalived -->
+
+        <section id="keepalived-script-config">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">配置keepalived脚本</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "cofig-keepalived-script",
+                  url: "video/chapter003/配置keepalived脚本_batch.mp4",
+                  pauses: [0, 1.917954, 19.220068, 31.170487, 64.812927, 73.343898, 89.631586, 114.226994, 154.963122]
+                });
+              </script>
+              <div id="cofig-keepalived-script-video-fragment-container"></div>
+              </div>
+              </div>
+        </section> <!-- keepalived-script-config -->
+
+        <section id="script-problem">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">监测脚本问题</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">目前已经可以实现当nginx失效的时候，自动停用keepalived，从而触发VRRP消息中断，虚拟IP自动切换</p>
+              <p class="fragment">但，如果nginx服务恢复，keepalived服务并不会自动恢复</p>
+              <p class="fragment">要实现此目的，需要切换新的思路</p>
+              <p class="fragment">keepalived实际上会读取脚本的返回值：</p>
+              <ul>
+                <li class="fragment">返回0表示脚本正常退出</li>
+                <li class="fragment">返回非0表示脚本异常退出</li>
+              </ul>
+              <p class="fragment">
+                keepalived实际上可以根据返回值修改服务状态，例如降低实例的优先级：weight -10
+              </p>
+            </div>
+          </div>
+        </section> <!-- script-problem -->
+
+        <section id="modify-shell-script">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">修改监测脚本</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                可以利用keepaived软件接受脚本返回值的特性，修改脚本和配置文件如下：
+              </p>
+              <form class="fragment tab-container full-height">
+                <input type="radio" name="tab" class="tab-1" checked><span>check-nginx.sh</span>
+                <input type="radio" name="tab" class="tab-2"><span>keepalived.conf</span>
+                <div class="tab-content-1">
+                  <pre><code class="lang-shell" style="max-height: 700px;" data-line-numbers="">
+                    <script type="text/template">
+#!/bin/bash
+if [ `netstat lntp | grep nginx | wc l` -lt 1 ]; then
+  exit 2
+else 
+  exit 0
+fi
+                    </script>
+                  </code></pre>
+                </div>
+                <div class="tab-content-2">
+                  <pre><code class="lang-shell" style="max-height: 700px;" data-line-numbers="">
+                    <script type="text/template">
+vrrp_script check_nginx { 
+	script "/root/bin/check_nginx.sh"
+	interval 2
+  weight -50
+  fall 3
+  rise 3
+  timeout 2
+}
+
+vrrp_instance VI_1 {
+  ...
+	track_script {
+		check_nginx
+	}
+}
+                    </script>
+                  </code></pre>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section> <!-- modify-shell-script -->
+
+        <section id="nginx-control-keepalived">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：使用keepalived脚本完全监测nginx存活状况</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "nginx-control-keepalived",
+                  url: "video/chapter003/配置Keepalivedj脚本检测nginx存活_batch.mp4",
+                  pauses: [0, 18.052479, 43.007384, 110.25909, 116.853303, 131.844833, 137.041667, 138.363111, 146.578878, 157.119145, 162.208333]
+                });
+              </script>
+              <div id="nginx-control-keepalived-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- keepalived-script-control-nginx -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="why-separate">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">为什么需要动静分离</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack full-size">
+                <div class="full-size">
+                  <p class="fragment">现在的大部分网站都设计成为前后端分离网站，甚至有些网站称为单页面应用（SPA）。</p>
+                  <p class="fragment">现代站点的<b>网站部分</b>、<b>资源部分</b>和<b>业务部分</b>完全分离：</p>
+                  <ul>
+                    <li class="fragment">网站部分：主要是各种页面文件、样式文件脚本文件，不做任何的业务计算，追求高吞吐率，访问集中。</li>
+                    <li class="fragment">资源部分：多是静态图片等文件资源，访问随机。</li>
+                    <li class="fragment">业务部分：多是后台计算和数据访问类型，计算要求高。</li>
+                  </ul>
+                  <p class="fragment">不同的网站组成部分对服务器的需求是不同的，因此应该建立不同的集群。</p>
+                  <p class="fragment">动态组件和静态组件的配置在Nginx的配置略有不同</p>
+                  <p class="fragment">Nginx可以支持动静分离配置</p>
+                  <p class="fragment">可以根据网址中的<b>路径</b>分配不同功能的集群</p>
+                </div>
+                <div class="r-stack fragment wframe">
+                  <img class="animated slideInLeft" src="img/chapter003/separate-dynamic-static.png">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- why-separate -->
+
+        <section id="separate-topology">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">动静分离拓扑</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack full-size">
+                <div class="full-size">
+                  <p class="fragment">
+                    整个网站需要三个组件：
+                  </p>
+                  <ul>
+                    <li class="fragment">动态网站部分</li>
+                    <li class="fragment">静态网站部分</li>
+                    <li class="fragment">负载均衡器</li>
+                  </ul>
+                </div>
+                <div class="r-stack fragment wframe">
+                  <img class="animated slideInLeft" src="img/chapter003/separate-dynamic-static-topology.png">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- separate-topology -->
+
+        <section id="dynamic-site">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">动态网站</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">配置开发环境（Eclipse/IDEA，Gradle/Maven）</p>
+              <p class="fragment">建立SpringBoot项目</p>
+              <p class="fragment">SpringBoot项目打包</p>
+              <p class="fragment">jar包的部署</p>
+              <p class="fragment">为网站创建服务</p>
+              <p class="fragment">开机自动启动</p>
+            </div>
+          </div>
+        </section> <!-- dynamic-site -->
+
+        <section id="dynamic-site-video">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：动态网站的部署</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "dynamic-site-show",
+                  url: "video/chapter003/动态网站建立与部署_batch.mp4",
+                  pauses: [0, 4.161405, 18.552304, 34.70179, 54.828442, 79.119353, 84.75999, 87.728484, 110.161353, 139.29, 160.136, 199.930526, 234.486666, 281.422, 298.21745, 305.86136, 365.091737, 429.493852, 531.583333, 556.658827, 589.974943, 629.498825, 648.875, 653.062173, 671.698497, 758.225157, 858.962731, 870.731038, 891.395776, 992.672, 1006.099, 1031.046237, 1044.463, 1061.727, 1102.009, 1144.21, 1153.801, 1177.456541]
+                });
+              </script>
+              <div id="dynamic-site-show-video-fragment-container"></div>
+              </div>
+          </div>
+        </section> <!-- dynamic-site-video -->
+
+        <section id="load-balance-for-dynamic-site">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">动态网站的负载均衡</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">Nginx默认的负载均衡机制无法支持动态网站</p>
+              <p class="fragment">必须修改请求头的内容才能支持在动态网站之间进行负载均衡</p>
+            </div>
+          </div>
+        </section> <!-- load-balance-for-dynamic-site -->
+
+        <section id="load-balance-for-dynamic-site-video">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：为动态网站建立负载均衡</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "load-balance-for-dynamic-site-show",
+                  url: "video/chapter003/动态网站的负载均衡_batch.mp4",
+                  pauses: [0, 32.911, 57.885, 89.490366]
+                });
+              </script>
+              <div id="load-balance-for-dynamic-site-show-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- load-balance-for-dynamic-site-video -->
+
+        <section id="static-site">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">建立静态网站内容</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">静态网站内容主要包含html, css和js文件（可能还含有一些图片等资源）</p>
+              <p class="fragment">静态网站可以用任何网页制作工具进行设计制作</p>
+              <p class="fragment">静态网站和动态网站之间可以通过Ajax技术或者WebSocket技术进行相互通信完成前后端对接</p>
+              <p class="fragment">在Nginx中部署静态网站比较简单，但需要注意用户权限问题</p>
+            </div>
+          </div>
+        </section> <!-- static-site -->
+
+        <section id="static-site-video">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：在Nginx中部署静态网站</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "static-site-show",
+                  url: "video/chapter003/nginx部署静态网站_batch.mp4",
+                  pauses: [0, 16.265333, 78.563748, 86.560519, 112.262565, 124.305719, 136.130896, 156.196989, 189.479, 220.304, 341.76322, 366.264761, 377.790855]
+                });
+              </script>
+              <div id="static-site-show-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- static-site-video -->
+
+        <section id="separate-in-nginx">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Nginx动静分离的部署</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">在Nginx中实现动态网站和静态网站分离，主要依靠配置不同的路径对应的网址。</p>
+              <p class="fragment">首先，为动态和静态部分配置不同的upstream：</p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+upstream static_servers_pool {
+	server 192.168.56.14;
+}
+upstream dynamic_servers_pool {
+	server 192.168.56.11;
+	server 192.168.56.12;
+}
+                </script>
+              </code></pre>
+              <p class="fragment">
+                然后，为不同的路径配置不同的upsream：
+              </p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                <script type="text/template">
+location /static/ {
+	proxy_pass http://static_servers_pool;
+}
+location / {
+	proxy_pass http://dynamic_servers_pool;
+  ...
+}
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- separate-in-nginx -->
+
+        <section id="separate-in-nginx-video">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：在Nginx中配置动静分离</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "separate-in-nginx",
+                  url: "video/chapter003/动静分离的部署_batch.mp4",
+                  pauses: [0, 13.747844, 33.759306, 103.770142, 130.735842, 159.573655]
+                });
+              </script>
+              <div id="separate-in-nginx-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- separate-in-nginx -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="session-problem">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">思考：动态网站负载均衡的session问题</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">session是什么？</p>
+              <p class="fragment">session有什么作用？</p>
+              <p class="fragment">session是怎么工作的？</p>
+              <p class="fragment">session是存储在服务器的内存中的</p>
+              <p class="fragment">session默认不可以在多个服务器中共享</p>
+              <p class="fragment">若同一个用户的多次请求每次都被均衡到不同的服务器上，session怎么办？</p>
+            </div>
+          </div>
+        </section> <!-- session-problem -->
+
+        <section id="session-problem-video">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：session问题</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "session-problem-show",
+                  url: "video/chapter003/动态网站负载均衡的session问题_batch.mp4",
+                  pauses: [0, 63.322011, 156.187824, 188.714272, 245.801482, 262.71, 300.478151, 325.166667, 370.039657, 376.257592, 379, 384.845479, 454.276101, 469.64708, 678.23316]
+                });
+              </script>
+              <div id="session-problem-show-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- session-problem-video -->
+
+        <section id="session-problem-solution">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">session问题的解决方案</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">sessoin问题的出现主要是由于负载均衡会将同一个用户的请求往不同的服务器转发</p>
+              <p class="fragment">而服务器之间无法共享其他服务器的session数据</p>
+              <p class="fragment">因此，主要的解决方案有三种：</p>
+              <ul>
+                <li class="fragment">服务器之间共享session</li>
+                <li class="fragment">使用session集群</li>
+                <li class="fragment">使得同一个用户的请求永远转发到同一个服务器
+                  <p class="fragment">upstream模块支持很多调度算法</p>
+                  <p class="fragment">静态态调度算法：</p>
+                    <ul style="columns: 2;">
+                      <li class="fragment">rr</li>
+                      <li class="fragment">wrr</li>
+                      <li class="fragment"><b>ip_hash</b></li>
+                    </ul>
+                  <p class="fragment">动态调度算法：</p>
+                    <ul style="columns: 2;">
+                      <li class="fragment">fair</li>
+                      <li class="fragment">least_conn</li>
+                    </ul>
+                  <p class="fragment">其他调度算法（多为第三方）：</p>
+                    <ul style="columns: 2;">
+                      <li class="fragment">url_hash</li>
+                      <li class="fragment">consistency hash</li>
+                    </ul>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- session-problem-solution -->
+
+        <section id="ip-hash">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">ip-hash的原理</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">ip-hash的主要原理是根据用户请求包中的五元组来判断是不是同一个用户的请求：</p>
+              <ul>
+                <li class="fragment">源IP地址</li>
+                <li class="fragment">目的IP地址</li>
+                <li class="fragment">源端口号</li>
+                <li class="fragment">目的端口号</li>
+                <li class="fragment">协议号</li>
+              </ul>
+              <p class="fragment">若请求的五元组计算的hash值相同，则该请求被保持到同一个服务器上</p>
+              <p class="fragment"><b>思考</b>：ip-hash的实现代价高吗？</p>
+              <p class="fragment">负载均衡器是否要记住每个请求的用户上次被分配到哪个服务器节点上？</p>
+              <p class="fragment">存储用户上次请求的缓存需要多大合适？</p>
+              <p class="fragment">能否实现无状态的ip-hash？</p>
+            </div>
+          </div>
+        </section> <!-- ip-hash -->
+
+        <section id="ip-hash-solution">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：使用ip_hash解决session问题</h1>
+            </div>
+            <div class="content full-size">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "ip-hash-show",
+                  url: "video/chapter003/动态网站的session保持_batch.mp4",
+                  pauses: [0, 19.662237, 99.494]
+                });
+              </script>
+              <div id="ip-hash-show-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- ip-hash-solution -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="why-file-share">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">思考：session保持下的文件上传问题</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">session可以通过ip_hash方式进行保持，但上传的文件呢，不同主机之间如何共享文件？</p>
+              <p class="fragment">例如：新闻发布系统，用户上传文件只能上传到一个特定的服务器，被负载均衡分配到其他服务器的用户将无法正确获取图片。</p>
+            </div>
+          </div>
+        </section> <!-- why-file-share -->
+
+        <section id="file-upload-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：文件上传问题</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "file-upload",
+                  url: "video/chapter003/文件上传问题_batch.mp4",
+                  pauses: [0, 28.501, 42.65, 52.757, 77.821, 204.761, 261.359]
+                });
+              </script>
+              <div id="file-upload-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- file-upload-demo -->
+
+        <section id="file-upload-conclusion">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">文件上传问题结论</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack full-size">
+                <div class="full-size">
+                  <p class="fragment">文件只能上传到单个服务器</p>
+                  <p class="fragment">若不同的用户被负载均衡器分配到不同的服务器节点，则访问的文件可能完全不同，可能造成文件无法访问，或者文件不一致。</p>
+                  <p class="fragment">解决方法主要是设置一个（或多个）文件共享节点，然后用户的文件上传主要上传到这些共享文件节点</p>
+                  <p class="fragment">不同的用户获取文件都从这些共享服务器获取，从而避免文件和业务服务器耦合。</p>
+                  <p class="fragment">最简单和常用的文件共享系统是nfs服务。</p>
+                </div>
+                <div class="r-stack fragment wframe">
+                  <img class="animated slideInLeft" src="img/chapter003/file-share-topology.png">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- file-upload-conclusion -->
+
+        <section id="nfs-files">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">NFS相关文件</h1>
+            </div>
+            <div class="content">
+              <p class="fragment"><b>主要配置文件</b>：/etc/exports</p>
+              <p class="fragment">这是 NFS 的主要配置文件了。该文件是空白的，有的系统可能不存在这个文件，主要手动建立。NFS的配置一般只在这个文件中配置即可。</p>
+              <p class="fragment"><b>NFS 文件系统维护指令</b>：/usr/sbin/exportfs</p>
+              <p class="fragment">这个是维护 NFS 分享资源的指令，可以利用这个指令重新分享 /etc/exports 变更的目录资源、将 NFS Server 分享的目录卸除或重新分享。</p>
+              <p class="fragment"><b>分享资源的登录档</b>：/var/lib/nfs/*tab</p>
+              <p class="fragment">在 NFS 服务器的登录文件都放置到 /var/lib/nfs/ 目录里面，在该目录下有两个比较重要的登录档， 一个是 etab ，主要记录了 NFS 所分享出来的目录的完整权限设定值；另一个 xtab 则记录曾经链接到此 NFS 服务器的相关客户端数据。</p>
+              <p class="fragment"><b>客户端查询服务器分享资源的指令</b>：/usr/sbin/showmount</p>
+              <p class="fragment">这是另一个重要的 NFS 指令。exportfs 是用在 NFS Server 端，而 showmount 则主要用在 Client 端。showmount 可以用来察看 NFS 分享出来的目录资源。</p>
+            </div>
+          </div>
+        </section> <!-- nfs-files -->
+
+        <section id="nfs-steps">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">NFS安装步骤</h1>
+            </div>
+            <div class="content">
+              <p class="fragment"><b>第一步</b>：安装NFS和rpc。</p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                <script type="text/template">
+[root@localhost ~]# yum install -y  nfs-utils   
+[root@localhost ~]# yum install -y rpcbind
+                </script>
+              </code></pre>
+              <p class="fragment">第二步：启动服务和设置开启启动：</p>
+
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+[root@localhost ~]# systemctl start rpcbind    #先启动rpc服务
+[root@localhost ~]# systemctl enable rpcbind   #设置开机启动
+[root@localhost ~]# systemctl start nfs-server nfs-secure-server      
+[root@localhost ~]# systemctl enable nfs-server nfs-secure-server
+                </script>
+              </code></pre>
+              <p class="fragment">注意：先启动rpc服务，再启动nfs服务。</p>
+            </div>
+          </div>
+        </section> <!-- nfs-steps -->
+
+        <section id="nfs-server-side">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">NFS服务器端配置</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">创建共享目录，在/etc/exports配置文件中编辑配置即可。</p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                <script type="text/template">
+[root@localhost /]# mkdir /public
+#创建public共享目录
+[root@localhost /]# vi /etc/exports
+	/public 192.168.245.0/24(ro)
+	/protected 192.168.245.0/24（rw）
+[root@localhost /]# systemctl reload nfs 
+                </script>
+              </code></pre>
+              <p class="fragment">配置文件说明：</p>
+              <ul>
+                <li class="fragment">格式： 共享目录的路径 允许访问的NFS客户端（共享权限参数）</li>
+                <li class="fragment">如上，共享目录为/public , 允许访问的客户端为192.168.245.0/24网络用户，权限为只读。</li>
+                <li class="fragment">请注意，NFS客户端地址与权限之间没有空格。</li>
+                <li class="fragment">NFS输出保护需要用到kerberos加密（none，sys，krb5，krb5i，krb5p），格式sec=XXX
+                  <ul>
+                    <li class="fragment">none：以匿名身份访问，如果要允许写操作，要映射到nfsnobody用户，同时布尔值开关要打开，setsebool nfsd_anon_write 1</li>
+                    <li class="fragment">sys：文件的访问是基于标准的文件访问，如果没有指定，默认就是sys， 信任任何发送过来用户名</li>
+                    <li class="fragment">krb5：客户端必须提供标识，客户端的表示也必须是krb5，基于域环境的认证</li>
+                    <li class="fragment">krb5i：在krb5的基础上做了加密的操作，对用户的密码做了加密，但是传输的数据没有加密</li>
+                    <li class="fragment">krb5p：所有的数据都加密</li>
+                  </ul>
+                </li>
+              </ul>
+              <p class="fragment">用于配置NFS服务程序配置文件的参数：</p>
+              <table class="fragment">
+                <tbody>
+                  <tr>
+                    <td width="93">
+                      <p>参数</p>
+                    </td>
+                    <td width="461">
+                      <p>作用</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="93">
+                      <p>ro</p>
+                    </td>
+                    <td width="461">
+                      <p>只读</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="93">
+                      <p>rw</p>
+                    </td>
+                    <td width="461">
+                      <p>读写</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="93">
+                      <p>root_squash</p>
+                    </td>
+                    <td width="461">
+                      <p>当NFS客户端以root管理员访问时，映射为NFS服务器的匿名用户</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="93">
+                      <p>no_root_squash</p>
+                    </td>
+                    <td width="461">
+                      <p>当NFS客户端以root管理员访问时，映射为NFS服务器的root管理员</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="93">
+                      <p>all_squash</p>
+                    </td>
+                    <td width="461">
+                      <p>无论NFS客户端使用什么账户访问，均映射为NFS服务器的匿名用户</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="93">
+                      <p>sync</p>
+                    </td>
+                    <td width="461">
+                      <p>同时将数据写入到内存与硬盘中，保证不丢失数据</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td width="93">
+                      <p>async</p>
+                    </td>
+                    <td width="461">
+                      <p>优先将数据保存到内存，然后再写入硬盘；这样效率更高，但可能会丢失数据</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section> <!-- nfs-server-side -->
+
+        <section id="nfs-client-side">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">NFS客户端配置</h1>
+            </div>
+            <div class="content">
+              <p class="fragment"><b>第一步</b>：使用showmount命令查看nfs服务器共享信息。输出格式为“共享的目录名称 允许使用客户端地址”。</p>
+
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+[root@localhost ~]# showmount -e 192.168.245.128      
+Export list for 192.168.245.128:
+/protected 192.168.245.0/24
+/public    192.168.245.0/24
+                </script>
+              </code></pre>
+              <p class="fragment">showmount命令的用法；</p>
+              <table class="fragment">
+                <thead>
+                  <tr>
+                    <th>参数</th>
+                    <th>作用</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>-e</td>
+                    <td>显示NFS服务器的共享列表</td>
+                  </tr>
+                  <tr>
+                    <td>-a</td>
+                    <td>显示本机挂载的文件资源的情况NFS资源的情况</td>
+                  </tr>
+                  <tr>
+                    <td>-v</td>
+                    <td>显示版本号</td>
+                  </tr>
+                </tbody>
+              </table>
+              <p class="fragment"><b>第二步</b>，在客户端创建目录，并挂载共享目录。</p>
+              <pre class="fragment"><code class="lang-cpp" data-line-numbers="">
+                <script type="text/template">
+[root@localhost ~]# mkdir /mnt/public
+[root@localhost ~]# mkdir /mnt/data
+[root@localhost ~]# vim /etc/fstab 
+#在该文件中挂载，使系统每次启动时都能自动挂载
+	192.168.245.128:/public  /mnt/public       nfs    defaults 0 0
+	192.168.245.128:/protected /mnt/data     nfs    defaults  0 1
+[root@localhost ~]# mount -a   #是文件/etc/fstab生效
+                </script>
+              </code></pre>
+              <p class="fragment"><b>第三步</b>：检查：</p>
+              <pre class="fragment"><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+[root@mail ~]# df -Th
+Filesystem                 Type      Size  Used Avail Use% Mounted on
+/dev/mapper/rhel-root      xfs        17G  3.1G   14G  18% /
+devtmpfs                   devtmpfs  1.4G     0  1.4G   0% /dev
+tmpfs                      tmpfs     1.4G  140K  1.4G   1% /dev/shm
+tmpfs                      tmpfs     1.4G  9.1M  1.4G   1% /run
+tmpfs                      tmpfs     1.4G     0  1.4G   0% /sys/fs/cgroup
+/dev/sda1                  xfs      1014M  173M  842M  18% /boot
+tmpfs                      tmpfs     280M   32K  280M   1% /run/user/0
+/dev/sr0                   iso9660   3.6G  3.6G     0 100% /mnt/cdrom
+192.168.245.128:/public    nfs4       17G  3.7G   14G  22% /mnt/public
+192.168.245.128:/protected nfs4       17G  3.7G   14G  22% /mnt/data
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- nfs-client-side -->
+
+        <section id="nfs-file-share-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：配置nfs文件共享</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "nfs-file-share",
+                  url: "video/chapter003/nfs文件共享_batch.mp4",
+                  pauses: [0]
+                });
+              </script>
+              <div id="nfs-file-share-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- config-nfs-file-sharing -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="data-lose">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">思考：数据丢失</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                <b>思考</b>：如何应对文件共享服务器的硬盘损坏等事件？
+              </p>
+            </div>
+          </div>
+        </section> <!-- data-lose -->
+
+        <section id="what-is-raid">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是RAID</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack full-size">
+                <div class="full-size">
+                  <p class="fragment">RAID Redundant Array of Independent Disks（独立磁盘冗余阵列）是一项使用多个硬盘来提高性能或安全性或性能+安生性的技术。</p>
+                  <p class="fragment">简单点我们可以把RAID理解为是一项把多个小的物理硬盘组成一个大的逻辑硬盘来使用的技术。</p>
+                </div>
+                <div class="r-stack fragment">
+                  <img class="animated slideInLeft" src="img/chapter003/what-is-raid.png">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- what-is-raid -->
+
+        <section id="why-raid">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">为什么需要磁盘阵列</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">提供<b>更大</b>的存储容量：</p>
+              <p class="fragment">阵列跨接</p>
+              <p class="fragment">提供<b>更快</b>的传输速度：</p>
+              <p class="fragment">数据条带化和硬盘同时读写</p>
+              <p class="fragment">提供更高的<b>数据安全</b>性：</p>
+              <p class="fragment">硬盘镜像、奇偶校验以及热备用</p>
+            </div>
+          </div>
+        </section> <!-- why-raid -->
+
+        <section id="raid-concepts">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID的基本概念</h1>
+            </div>
+            <div class="content">
+             <div class="r-stack full-size">
+             <div class="full-size">
+               <p class="fragment">最小的单元是“<b>物理硬盘</b>”，也叫“物理驱动器”。</p>
+               <p class="fragment">将多个物理硬盘创建成“<b>磁盘阵列</b>”，“磁盘阵列”也可以称为“磁盘组”，不同的厂家有不同的称呼。</p>
+               <p class="fragment">由一个或多个“磁盘阵列”构成“<b>物理卷</b>”。</p>
+               <p class="fragment">接下来需要对“物理卷”进行划分，可以使用全部容量划分成一个“<b>逻辑卷</b>”，也可以指定不同的容量分为多个“逻辑卷”。“逻辑卷”用LUN(Logical Unit Number，逻辑单元号)来标识。“逻辑卷”在这代表“虚拟驱动器”，在操作系统里面的“磁盘管理”当中会被识别成一个独立的硬盘。</p>
+               <p class="fragment">最后，在操作系统里面对“逻辑卷”也就是“虚拟驱动器”进行平常的分区和格式化操作之后就可以使用了。 </p>
+             </div>
+             <div class="r-stack fragment full-size">
+               <img class="animated slideInLeft" src="img/chapter003/raid-concepts.png">
+             </div>
+             </div>
+            </div>
+          </div>
+        </section> <!-- raid-concepts -->
+
+        <section id="raid-level" data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID级别简介</h1>
+            </div>
+            <div class="content full-size">
+              <p class="fragment">基本RAID级别</p>
+              <div class="fragment fade-out collapse full-size" data-fragment-after="group1-last">
+                <table class="fragment" data-fragment-id="group1-last">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <p>RAID0</p>
+                      </td>
+                      <td>
+                        <p>使用条带化，可提供高数据吞吐量，特别是对于不需要容错环境中的大型文件。</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p>RAID1</p>
+                      </td>
+                      <td>
+                        <p>使用镜像，写入到一个硬盘的数据同时写入到另一个硬盘。对于需要较小容量但需要完整数据冗余的小型数据库或其他应用，是个不错的选择。</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p>RAID5</p>
+                      </td>
+                      <td>
+                        <p>在所有硬盘上使用硬盘条带化和分布式奇偶校验，可提供高数据吞吐量，特别是对于小型随机存取。</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p>RAID6</p>
+                      </td>
+                      <td>
+                        <p>使用分布式奇偶校验（每个带区有两个独立奇偶校验块）和硬盘条带化，在RAID 6阵列中的两个硬盘发生故障后，仍然可以正常工作，而不会丢失数据。</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="fragment">组合RAID级别</p>
+              <div class="fragment dummy collapse full-size" data-fragment-with="group2-last">
+                <table class="fragment" data-fragment-id="group2-last">
+                  <tbody>
+                    <tr>
+                      <td>
+                        <p>RAID10</p>
+                      </td>
+                      <td>
+                        <p>RAID 1和RAID 0的组合，由多个镜像跨接上的带区数据组成。它提供高数据吞吐量和完整的数据冗余，并支持较多数量的跨接。</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p>RAID50</p>
+                      </td>
+                      <td>
+                        <p>RAID 5和RAID 0 的组合，使用分布式奇偶校验和硬盘条带化，且最适合需要高可靠性、高请求率、高速数据传输和中大型容量的应用。</p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>
+                        <p>RAID60</p>
+                      </td>
+                      <td>
+                        <p>RAID 6和RAID 0的组合，使用分布式奇偶校验（在每个RAID阵列中每个带区有两个独立奇偶校验块）和硬盘条带化。在RAID
+                          60阵列中，每个RAID6阵列可以允许两个硬盘发生故障，之后仍能正常工作，而不会丢失数据。它最适合需要高可靠性、高请求率、高速数据传输和中大型容量的应用。</p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section> <!-- raid-level -->
+
+        <section id="data-strip">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">数据条带化</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack">
+              <div class="">
+                <p class="fragment"><b>条带</b>（Strip）：是指将数据分割成的离散数据块（段）。将这些数据块（段）同时分布到硬盘阵列中的每个物理硬盘上的这种工作方式被称为“数据条带化”。</p>
+                <p class="fragment"><b>带区</b>（Stripe）：是指硬盘阵列当中物理硬盘上“同一位置”的一组条带的集合。</p>
+                <p class="fragment"><b>条带大小</b>：是指每一个条带的大小。</p>
+                <p class="fragment"><b>带区大小</b>：是指跨所有数据盘的一组条带的总大小，不包括奇偶校验带区。</p>
+                <p class="fragment"><b>带区宽度</b>：指涉及的硬盘数量</p>
+              </div>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter003/data-strip.png">
+              </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- data-strip -->
+
+        <section id="raid-0">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID 0</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">RAID 0在RAID阵列内的所有硬盘上提供数据条带化，RAID 0 将数据分成较小的段，然后将数据段条带化到阵列中的每个硬盘上。</p>
+              <p class="fragment">RAID 0提供高带宽和所有RAID级别中最佳的性能，但是不提供任何的数据冗余。</p>
+              <p class="fragment">在某些板载RAID设置中，RAID 0也被称为IS(Integrated Striping，集成条带化)。</p>
+              <p class="fragment"><b>用途</b>：任何不要求容错的环境，提供高数据吞吐量，特别是对于大型文件。</p>
+              <p class="fragment"><b>优点</b>：读写速度快，没有容量损失。</p>
+              <p class="fragment"><b>缺点</b>：任何1块硬盘发生故障都会导致整个阵列数据丢失，不适合应用于关键数据。</p>
+              <p class="fragment"><b>硬盘数量</b>：一般是最少2块硬盘，有的RAID卡也支持单块硬盘创建RAID0。</p>
+              <p class="fragment"><b>容错</b>：无</p>
+            </div>
+          </div>
+        </section> <!-- raid-0 -->
+
+        <section id="raid-0-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：RAID0原理</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "raid-0",
+                  url: "video/chapter003/RAID0_batch.mp4",
+                  pauses: [0, 9.277012, 11.596106, 19.405505, 25.007]
+                });
+              </script>
+              <div id="raid-0-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- raid-0 -->
+
+        <section id="raid-1">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID1</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">很多人把RAID1形象的称为<b>硬盘镜像</b>。</p>
+              <p class="fragment">主要优点是它提供了100％的数据冗余。</p>
+              <p class="fragment">因为内容硬盘被完全写入第二个硬盘，如果一个硬盘发生故障，数据也不会丢失。</p>
+              <p class="fragment">另外，在任何时候，两个硬盘都包含相同的数据，所以任何一个硬盘都可以充当操作硬盘，提供双倍的<b>读</b>速度。</p>
+              <p class="fragment">如果一个硬盘发生故障，其他硬盘的内容也可以运行系统并重建故障硬盘。</p>
+              <p class="fragment">其缺点是，存储容量会缩小一半。</p>
+              <p class="fragment">在RAID 1中，RAID控制器会将所有数据同时复制到另一个硬盘。</p>
+              <p class="fragment">RAID 1提供完整的数据冗余，但是要付出双倍存储容量的代价。</p>
+              <p class="fragment">在某些板载RAID设置中，RAID 1也被称为IM(Integrated Mirror，集成镜像)。</p>
+              <p class="fragment"><b>用途</b>：要求容错和较小容量的小型数据库或环境。</p>
+              <p class="fragment"><b>优点</b>：提供高读取性能和完整的数据冗余。</p>
+              <p class="fragment"><b>缺点</b>：有效容量小，存储空间利用率低。</p>
+              <p class="fragment"><b>硬盘数量</b>：最少2块硬盘，且必须为偶数。</p>
+              <p class="fragment"><b>容错</b>：允许1块硬盘发生故障，数据不丢失。 </p>
+            </div>
+          </div>
+        </section> <!-- raid-1 -->
+
+
+        <section id="raid-1-capacity">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID1的容量计算</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">计算公式：</p>
+              <p class="fragment">$$C=S\times (N/2)$$</p>
+              <p class="fragment">C为最终磁盘阵列的有效总容量</p>
+              <p class="fragment">S为单个硬盘的容量</p>
+              <p class="fragment">N为硬盘的数量</p>
+              <p class="fragment">例如：使用两块容量为1T的硬盘组成的RAID1磁盘阵列的容量计算：</p>
+              <p class="fragment">$$理论总容量=1T*2块=2T$$</p>
+              <p class="fragment">$$有效容量C=1T*(2/2 )=1T$$</p>
+            </div>
+          </div>
+        </section> <!-- raid-1-capacity -->
+
+        <section id="raid-1-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：RAID1原理</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "raid-1",
+                  url: "video/chapter003/RAID1_batch.mp4",
+                  pauses: [0, 11.122524, 13.395876, 20.676723, 24.084, 31.348077]
+                });
+              </script>
+              <div id="raid-1-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- raid-1 -->
+
+        <section id="parity">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">校验</h1>
+            </div>
+            <div class="content">
+             <p class="fragment">校验（Parity）是一种判断或校正数据错误的一种方式。</p>
+             <p class="fragment">一般通过算法或者数学公式从数据中提取部分信息进行计算，然后通过计算的结果判断数据是否在传输或者存储过程中出现错误。</p>
+             <p class="fragment">有些校验算法只能判断数据是否出错，而某些校验算法则可以纠正错误。</p>
+             <p class="fragment">比较常用的校验算法有奇偶校验和CRC校验。</p>
+             <p class="fragment">奇偶校验能够通过使用从多个数据集获得的数学计算来重新创建数据。</p>
+             <p class="fragment">从根本上说，奇偶校验是称为“ABCsum”的所有数据的校验和。</p>
+             <p class="fragment">当硬盘A发生故障时，RAID控制器使用ABCsum来计算硬盘B+C上剩余的内容。然后在新硬盘A上重建剩余部分。</p>
+             <p class="fragment">奇偶校验可以是专用的（所有奇偶校验信息都放在同一硬盘上）或分布式的（奇偶校验信息分布在多个硬盘上）。</p>
+            </div>
+          </div>
+        </section> <!-- parity -->
+
+        <section id="raid-5">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID5</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">RAID 5包含硬盘条带化和分布式奇偶校验，RAID 5最适合同时执行大量小型I/O事务的应用。</p>
+              <p class="fragment"><b>用途</b>：适用于读取请求率高但写入请求率低且需要提供数据冗余的应用和环境。</p>
+              <p class="fragment"><b>优点</b>：以最低的容量损失提供数据冗余，高读取性能。</p>
+              <p class="fragment"><b>缺点</b>：不太适合需要大量写入的任务，重建硬盘时会降低阵列的性能。</p>
+              <p class="fragment"><b>硬盘数量</b>：最少3块硬盘</p>
+              <p class="fragment"><b>容错</b>：允许阵列中的1块硬盘发生故障，数据不会丢失。</p>
+            </div>
+          </div>
+        </section> <!-- raid-5 -->
+
+        <section id="raid-5-capacity">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID5的容量计算</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">计算公式：</p>
+              <p class="fragment">$$C=S\times (N-1)$$</p>
+              <p class="fragment">C为最终磁盘阵列的有效总容量</p>
+              <p class="fragment">S为单个硬盘的容量</p>
+              <p class="fragment">N为硬盘的数量</p>
+              <p class="fragment">例如：计算由3个1T容量的硬盘组成的RAID5阵列的有效容量。</p>
+              <p class="fragment">$$理论总容量＝1T\times 3块＝3T$$</p>
+              <p class="fragment">$$有效容量＝1T\times (3-1)块＝2T$$</p>
+            </div>
+          </div>
+        </section> <!-- raid-5 -->
+
+        <section id="raid-5-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：RAID5原理</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "raid-5",
+                  url: "video/chapter003/RAID5_batch.mp4",
+                  pauses: [0, 8.944854, 10.764, 19.118716, 22.166667, 23.814145, 32.488, 35.97992]
+                });
+              </script>
+              <div id="raid-5-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- raid-5 -->
+
+        <section id="raid-6">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID6</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">RAID 6与RAID 5类似（硬盘条带化和分布式奇偶校验），但RAID 6不是每个带区一个奇偶校验块，而是每个带区两个奇偶校验块。</p>
+              <p class="fragment">使用两个独立的奇偶校验块，RAID 6可以在阵列中的2个硬盘发生故障后，仍能正常工作，而不会丢失数据。</p>
+              <p class="fragment"><b>用途</b>：适用于读取请求率高但写入请求率低且需要提供较高数据冗余的应用和环境。</p>
+              <p class="fragment">优点：较高的数据冗余，高数据读取率。</p>
+              <p class="fragment"><b>缺点</b>：双奇偶校验导致写入性能下降，需要损失2块硬盘的容量来存放奇偶校验块。</p>
+              <p class="fragment"><b>硬盘数量</b>：最少3块硬盘，有些RAID卡要求最少4块硬盘。</p>
+              <p class="fragment"><b>容错</b>：允许阵列中的2块硬盘发生故障，数据不会丢失。</p>
+            </div>
+          </div>
+        </section> <!-- raid-6 -->
+
+        <section id="raid-6-capacity">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID6的容量计算</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">计算公式：</p>
+              <p class="fragment">$$C=S\times(N-2)$$</p>
+              <p class="fragment">C为最终磁盘阵列的有效总容量</p>
+              <p class="fragment">S为单个硬盘的容量</p>
+              <p class="fragment">N为硬盘的数量</p>
+              <p class="fragment">$$理论总容量=1T\times 4块=4T$$</p>
+              <p class="fragment">$$有效容量C=1T\times(4-2)块=2T$$</p>
+            </div>
+          </div>
+        </section> <!-- raid-6 -->
+
+        <section id="raid-6-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：RAID6原理</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "raid-6",
+                  url: "video/chapter003/RAID6_batch.mp4",
+                  pauses: [0, 10.485, 11.489042, 23.458333, 25.616629, 27.726217]
+                });
+              </script>
+              <div id="raid-6-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- raid-6 -->
+
+        <section id="array-spanning">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">阵列跨接</h1>
+            </div>
+            <div class="content">
+              <p class="fragment"><b>阵列跨接（Array Spanning）</b>：允许将多个阵列组合成一个大的虚拟驱动器。</p>
+              <p class="fragment">跨接的阵列必须具有相同带区大小且必须是连续的。</p>
+              <p class="fragment">跨接本身并不提供冗余，但RAID级别10、50和60通过RAID1、5或6在其跨接的每一个阵列中提供冗余。</p>
+            </div>
+          </div>
+        </section> <!-- raid-1 -->
+
+        <section id="raid-10">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID10</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">RAID 10是RAID1和RAID 0的组合。</p>
+              <p class="fragment">先将硬盘按每两块进行分组，创建成多组RAID1阵列，然后再将这些RAID1阵列跨接为RAID0阵列。</p>
+              <p class="fragment">RAID 10最多支持8 个阵列跨接。</p>
+              <p class="fragment"><b>用途</b>：适用于需要较高数据传输率和较高数据冗余的应用和环境。</p>
+              <p class="fragment"><b>优点</b>：高读取性能和完整的数据冗余。</p>
+              <p class="fragment"><b>缺点</b>：有效容量小，存储空间利用率低。</p>
+              <p class="fragment"><b>硬盘数量</b>：最少4块硬盘，且数量必须为偶数。</p>
+              <p class="fragment">容错：在RAID10阵列中，每一个RAID1阵列允许1块硬盘发生故障，数据不会丢失。</p>
+            </div>
+          </div>
+        </section> <!-- raid-10 -->
+
+        <section id="raid-10-capacity">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID10的容量计算</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">C=S\times(N/2)</p>
+              <p class="fragment">S为单个硬盘的容量</p>
+              <p class="fragment">N为硬盘的数量</p>
+              <p class="fragment">理论总容量=1T\times 4块=4T</p>
+              <p class="fragment">有效容量C＝1T\times (4/2)=2T</p>
+            </div>
+          </div>
+        </section> <!-- raid-1 -->
+
+        <section id="raid-10-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：RAID10原理</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "raid-10",
+                  url: "video/chapter003/RAID10_batch.mp4",
+                  pauses: [0, 12.220146, 15.6406, 22.096847, 23.921446, 25.665172, 28.676622, 31.307829]
+                });
+              </script>
+              <div id="raid-10-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- raid-10 -->
+
+        <section id="raid-50">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID50</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">RAID 50是RAID 5和RAID 0的组合。</p>
+              <p class="fragment">先将硬盘分组创建成多组RAID5阵列，然后再将这些RAID5阵列跨接为RAID0阵列。</p>
+              <p class="fragment">RAID 50最多支持8个硬盘阵列跨接，最多可以容忍8个硬盘发生故障，需要注意：每个RAID 5阵列中仅能容忍1个硬盘发生故障。</p>
+              <p class="fragment">用途：适用于需要高可靠性、高请求率、高速读写的中大型容量环境。</p>
+              <p class="fragment">优点：提供高数据吞吐量和数据冗余</p>
+              <p class="fragment">缺点：需要浪费部分存储空间用做奇偶校验</p>
+              <p class="fragment">硬盘数量：最少6块硬盘</p>
+              <p class="fragment">容错：在RAID50阵列中，每1个RAID5阵列允许1块硬盘发生故障，数据不会丢失。</p>
+            </div>
+          </div>
+        </section> <!-- raid-5 -->
+
+        <section id="raid-50-capacity">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID50的容量计算</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">C＝S*（N-1）*M</p>
+              <p class="fragment">S＝单个硬盘的容量</p>
+              <p class="fragment">N＝硬盘的数量</p>
+              <p class="fragment">M=阵列跨接数</p>
+              <p class="fragment">总容量＝1T*6块＝6T</p>
+              <p class="fragment">有效容量＝1T*（3-1）块*2＝4T</p>
+            </div>
+          </div>
+        </section> <!-- raid-5 -->
+
+        <section id="raid-50-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：RAID50原理</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "raid-50",
+                  url: "video/chapter003/RAID50_batch.mp4",
+                  pauses: [0, 10.166667, 12.409227, 21.202, 22.241597, 24.316707, 26.062353, 28.931]
+                });
+              </script>
+              <div id="raid-50-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- raid-50 -->
+
+        <section id="raid-60">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID60</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">RAID 60是RAID 6和RAID 0的组合。</p>
+              <p class="fragment">先将硬盘分组创建成多组RAID6阵列，然后再将这些RAID6阵列跨接为RAID0阵列。</p>
+              <p class="fragment">RAID 60最多支持8个硬盘阵列跨接，最多可以容忍16个硬盘发生故障，需要注意：每个RAID 6阵列中仅能容忍2个硬盘发生故障。</p>
+              <p class="fragment"><b>用途</b>：适用于需要容错的办公自动化等在线事务，或读取请求率高但写入请求率低的应用。</p>
+              <p class="fragment"><b>优点</b>：提供较高的读取性能和数据冗余。</p>
+              <p class="fragment"><b>缺点</b>：不太适合需要大量写入的任务，需要浪费更多的存储空间用做奇偶检验。</p>
+              <p class="fragment"><b>硬盘数量</b>：最少6块硬盘</p>
+              <p class="fragment"><b>容错</b>：在RAID60阵列中，每1个RAID6阵列可以允许2块硬盘发生故障，数据不会丢失。</p>
+            </div>
+          </div>
+        </section> <!-- raid-6 -->
+
+        <section id="raid-60-capacity">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID60的容量计算</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">有效容量＝S*（N-2）*M</p>
+              <p class="fragment">S＝单个硬盘的容量</p>
+              <p class="fragment">N＝硬盘的数量</p>
+              <p class="fragment">M=阵列跨接数</p>
+              <p class="fragment">总容量＝1T*8块＝8T</p>
+              <p class="fragment">有效容量＝1T*（4-2）块*2＝4T</p>
+            </div>
+          </div>
+        </section> <!-- raid-6 -->
+
+        <section id="raid-60-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：RAID60原理</h1>
+            </div>
+            <div class="content full-size">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "raid-60",
+                  url: "video/chapter003/RAID60_batch.mp4",
+                  pauses: [0, 12.230117, 14.596413, 25.968, 27.288506, 29.204642, 32.213258, 34.31]
+                });
+              </script>
+              <div id="raid-60-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- raid-60 -->
+
+        <section id="raid-summary">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">RAID级别性能参数汇总</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter003/raid-summary.png" alt="">
+            </div>
+          </div>
+        </section> <!-- raid-summary -->
+
+        <section id="thank-you-slide" class="end color--radiant">
+        </section>
+
+      </div> <!-- slides -->
+    </div> <!-- reveal -->
+
+		<script>
+      language = 'cn';
+
+      var myConfig = {
+        "math": math, 
+        "asciinema": {
+          rows: 24,
+          cols: 81
+        }
+      };
+
+      defineMyPlugins = function() {
+        myPreloadPlugins = [
+          /**** my plugins ****/
+          RevealLoadCode, RevealFragmentOrder,
+        ];
+        myPlugins = [
+          /**** built-in plugins ****/
+          /**** third-party plugins ****/
+          /**** my plugins ****/
+          RevealCodeTips, RevealFragmentGroup,
+        ];
+      }
+    </script>
+    <script src="js/common.js"></script>
+	</body>
+</html>

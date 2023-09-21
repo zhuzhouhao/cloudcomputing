@@ -1,0 +1,329 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>云计算 第〇章</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/mytheme.css" id="theme">
+
+    <link rel="stylesheet" href="css/asciinema-player.css" >
+
+		<link rel="stylesheet" href="plugin/highlight/brown-paper.css" id="highlight-theme">
+
+    <link rel="stylesheet" href="plugin/fragment-group/fragment-group.css">
+
+    <link rel="stylesheet" href="plugin/appearance/appearance.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+
+    <style>
+      @font-face {
+        font-family: 'Sauce Code Pro Nerd Font Complete';
+        src: url('fonts/Sauce Code Pro Nerd Font Complete.ttf');
+      }
+      .reveal asciinema-player pre {
+        font-family: 'Sauce Code Pro Nerd Font Complete';
+      }
+      .gap li {
+        margin: 10px 25px;
+      }
+    </style>
+	</head>
+	<body>
+		<div class="reveal pattern--random">
+			<div class="slides">
+
+        <section class="title" id="cover">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo--full"></div>
+						</div>
+						<div class="content">
+							<h1>云计算</h1>
+							<div class="description">
+                第〇章 课程简介
+							</div>
+						</div>
+						<div class="credit">
+							<hr/>
+							<div class="label">Lectured By</div>
+							<div class="name">夏羽</div>
+							<div class="role">四川师范大学</div>
+						</div>
+					</div>
+        </section>
+
+        <script>
+          var data = {
+            toc_index: 0,
+            toc: [
+            ],
+            cindex : ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十"],
+          };
+        </script>
+
+				<section id="course-basics">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">课程概况</h1>
+						</div>
+						<div class="content full-heiht">
+              <p class="fragment">
+                《云计算》课程是一门扩展型课程
+              </p>
+              <ul>
+                <li class="fragment">是网络工程专业学科发展必修课程</li>
+                <li class="fragment">是计算机科学与技术、软件工程专业的选修课。</li>
+              </ul>
+              <p class="fragment">
+                该门课程分为理论和实践两个部分，共3个学分，其中
+              </p>
+              <ul>
+                <li class="fragment">理论部分2学分（共32个课时，1-11周）</li>
+                <li class="fragment">实践部分1学分（共24个课时，2-13周）</li>
+              </ul>
+            </div>
+					</div>
+				</section>
+
+				<section id="schedule">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">教学安排</h1>
+						</div>
+						<div class="content">
+              <p class="fragment">
+                整个课程一共分为六章：
+              </p>
+              <ol class="fragment">
+                <li>云计算概述</li>
+                <li>集群技术简介</li>
+                <li>分布式技术</li>
+                <li>虚拟化技术</li>
+                <li>OpenStack</li>
+                <li>数据中心技术</li>
+              </ol>
+              <p class="fragment">
+                实验部分包含大量的实验和操作案例
+              </p>
+              <p class="fragment">
+                由于实验需要安装大量的虚拟机，最好使用自己的电脑
+              </p>
+              <p class="fragment">
+                EduCoder平台上会布置作业，作业是平时成绩的重要来源，请必须独立完成
+              </p>
+            </div>
+					</div>
+				</section>
+
+        <section id="course-project">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">期末项目</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">同学们需要在期末时独立完成一个项目</p>
+              <p class="fragment">项目分为易中难三个档次：</p>
+              <ul>
+                <li class="fragment">易：自动环境搭建脚本的编写</li>
+                <li class="fragment">中：搭建环境，并制作高性能网站</li>
+                <li class="fragment">难：算法、框架等</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- why-data-increase -->
+
+        <section id="attendence">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">考勤</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">考勤占10分平时成绩</p>
+              <p class="fragment">要求理论课和实验课必须参加</p>
+              <p class="fragment">到课人数少即点名</p>
+            </div>
+          </div>
+        </section> <!-- attendence -->
+
+        <section id="score">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">成绩评定</h1>
+            </div>
+            <div class="content">
+              <table>
+              <thead>
+                <tr>
+                  <th>考核依据   </th>
+                  <th>分值</th>
+                  <th>考核内容/评价细则</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>考勤</td>
+                  <td>10分</td>
+                  <td>不定期点名，扣分依次增加</td>
+                </tr>
+                <tr>
+                  <td>作业</td>
+                  <td>20分</td>
+                  <td>在EduCoder上完成，EduCoder自动判分</td>
+                </tr>
+                <tr>
+                  <td>期中考试</td>
+                  <td>25分</td>
+                  <td><b>内容</b>：闭卷上机考试，考核学生第每章节基本概念的理解和掌握程度<br><b>评价</b>：成绩按100分制打分，最终将折算为满分25分。</td>
+                </tr>
+                <tr>
+                  <td>期末考试</td>
+                  <td>25分</td>
+                  <td><b>内容</b>：闭卷笔试，考核学生第每章节知识点的复习、理解和掌握程度<br><b>评价</b>：成绩按100分制打分，最终将折算为满分25分。</td>
+                </tr>
+                <tr>
+                  <td>期末项目</td>
+                  <td>20分</td>
+                  <td><b>内容</b>：项目内容分为易中难三个档次，学生可以根据自己的实际情况选择项目难度。<br><b>评价</b>：根据同学完成情况和演示答辩情况进行评分。<br>答辩按100分制给分，最终折算为40分。&nbsp;&nbsp;&nbsp;</td>
+                </tr>
+              </tbody>
+              </table>
+            </div>
+          </div>
+        </section> <!-- score -->
+
+        <section id="end-radiant" class="end color--radiant">
+          <div class="logo-wrapper">
+            <div class="logo"><span class="visually-hidden"></span></div>
+            <div>
+              <p class="r-fit-text" style="color: #7030A0;">The end!</p>
+              <p class="r-fit-text" style="color: #7030A0;">Enjoy the course!</p>
+            </div>
+          </div>
+        </section>
+
+      </div> <!-- slides -->
+    </div> <!-- reveal -->
+
+    <script src="js/template-web.js"></script>
+
+    <script src="js/popper/popper.min.js"></script>
+    <script src="js/popper/tippy-bundle.umd.js"></script>
+
+    <script src="js/asciinema-player.js"></script>
+    <script src="js/lottie.js"></script>
+
+    <!-- include -->
+		<script src="dist/reveal.js"></script>
+
+    <!-- plugins -->
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/math/math.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script src="plugin/reveal.js-menu/menu.js"></script>
+    <script src="plugin/code-tips/code-tips.js"></script>
+    <script src="plugin/fragment-order/fragment-order.js"></script>
+    <script src="plugin/fragment-group/fragment-group.js"></script>
+    <script src="plugin/appearance/appearance.js"></script>
+    <script src="plugin/lottie-fragment/lottie-fragment.js"></script>
+
+		<script>
+
+      // Use a random theme if reveal container has 'pattern--random' class.
+      const themes = [
+        'hills',
+        'indigo',
+        'molecules',
+        'night-sky',
+        'orange-river',
+        'palette',
+        'playground',
+        'pop',
+        'quilt',
+        'stream',
+        'stripes',
+        'waterfall',
+        'waves',
+      ];
+
+      document.addEventListener('DOMContentLoaded', function () {
+        const reveal = document.getElementsByClassName('reveal').item(0);
+        if (!reveal.classList.contains('pattern--random')) {
+          return;
+        }
+
+
+        reveal.classList.forEach(function (value) {
+          if (value.substr(0, 7) === 'pattern') {
+            reveal.classList.remove(value);
+          }
+        });
+        const index = Math.floor(Math.random() * themes.length);
+        reveal.classList.add('pattern--' + themes[index]);
+
+
+      });
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+        width: 1024,
+        height: 768,
+				hash: true,
+        slideNumber: true,
+        autoAnimateEasing: 'ease-out',
+        autoAnimateDuration: 0.8,
+        autoAnimateUnmatched: false,
+        appearance: {
+            // The baseclass uses the baseclass from Animate.css. Change it if you like
+            baseclass: 'animated',
+            // Use a specific class for the visible state.
+            visibleclass: 'in',
+            // Change this if you want to see the shown elements if you go back
+            hideagain: true,
+            // Base time between appearances
+            delay: 300
+          },
+        math: {
+              mathjax: 'js/MathJax.js?config=TeX-AMS-MML_HTMLorMML',
+              config: 'TeX-AMS_HTML-full',
+              // pass other options into `MathJax.Hub.Config()`
+              TeX: { Macros: { RR: "{\\bf R}" } },
+              "HTML-CSS": { availableFonts: ["TeX"] },
+              extensions: ["tex2jax.js"],
+              jax: ["input/TeX", "output/SVG"],
+        },
+
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [RevealMarkdown, RevealHighlight, RevealNotes, RevealMenu, RevealMath,
+          RevealCodeTips, RevealFragmentOrder, RevealFragmentGroup, Appearance, RevealLottieFragment ]
+			});
+
+      Array.prototype.forEach.call(
+        document.querySelectorAll('pre code'),
+        function (element) {
+          if (!element.hasAttribute('data-notrim')) {
+            element.setAttribute('data-trim', '');
+          }
+          if (!element.hasAttribute('data-noescape')) {
+            element.setAttribute('data-escape', '');
+          }
+          /*
+          if(!element.hasAttribute('data-no-line-numbers')) {
+            element.setAttribute('data-line-numbers', '');
+          }
+          */
+      });
+
+		</script>
+	</body>
+</html>

@@ -1,0 +1,572 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>云计算 第二章</title>
+
+    <link rel="stylesheet" href="css/include.css" media="all">
+
+    <!-- pre-libraries -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+
+    <script src="js/define.js"></script>
+	</head>
+	<body>
+		<div class="reveal pattern--random">
+			<div class="slides">
+
+        <script>
+          courseName = "云计算";
+          chapterName = "第二章 实验环境";
+          toc = [
+            {name: "实验环境概述", desc: ""},
+            {name: "虚拟网络类型", desc: ""},
+            {name: "虚拟机的安装和配置", desc: ""},
+          ];
+        </script>
+
+				<section class="cover" id="cover">
+				</section>
+
+				<section class="toc color--midnight" id="toc">
+				</section>
+
+				<section class="subsection color--radiant">
+				</section>
+
+				<section id="network-topology">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">网络拓扑结构</h1>
+						</div>
+						<div class="content full-heiht">
+              <p class="fragment">
+                整个环境需要
+              </p>
+              <ul>
+                <li class="fragment">4台服务器
+                  <ul>
+                    <li class="fragment">内网地址</li>
+                    <li class="fragment">外网地址</li>
+                  </ul>
+                </li>
+                <li class="fragment">1台交换机</li>
+              </ul>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter002/network-topology.png">
+              </div>
+            </div>
+					</div>
+				</section>
+
+				<section id="software">
+					<div class="grid-wrapper">
+						<div class="header">
+							<div class="logo"></div>
+              <h1 class="header">主机需要安装软件</h1>
+						</div>
+						<div class="content">
+              <p class="fragment">实验环境主要在主机上通过虚拟机软件配置</p>
+              <p class="fragment">主要使用的软件如下：</p>
+              <ul>
+                <li class="fragment">Virtualbox或VMWare</li>
+                <li class="fragment">CentOS 7.5</li>
+                <li class="fragment">FinalShell或者XShell等</li>
+              </ul>
+            </div>
+					</div>
+				</section>
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="virtual-network" data-auto-animate="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟网络类型</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                虚拟机的网络类型主要有四种：
+              </p>
+              <ul>
+                <li class="fragment">NAT</li>
+                <li class="fragment">NAT Network</li>
+                <li class="fragment">Bridged</li>
+                <li class="fragment">Host-only</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- why-data-increase -->
+
+        <section id="virtual-network2" data-auto-animate="" data-fragment-order="">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟网络类型</h1>
+            </div>
+            <div class="content full-size">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="nat">
+                    NAT
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="nat-network" data-fragment-after="nat">
+                    NAT Network
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="bridged"  data-fragment-after="nat-network">
+                    Bridged
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge" data-fragment-group="none"  data-fragment-after="bridged">
+                    Host-only
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack">
+                <div class="fragment full-size fade-out" data-fragment-id="nat" data-fragment-after="nat-last">
+                  <p class="fragment" data-fragment-id="nat1">
+                    虚拟机可以访问外网，外网不能访问虚拟机。网段不可调整。
+                  </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="nat-network" data-fragment-after="nat-network-last">
+                  <p class="fragment" data-fragment-id="nat-network1">
+                    虚拟机可以访问外网，外网不能访问虚拟机。网段可调整。
+                  </p>
+                </div>
+                <div class="fragment full-size fade-out" data-fragment-id="bridged" data-fragment-after="bridged-last">
+                  <p class="fragment" data-fragment-id="bridged1">
+                    虚拟机可以访问外网，外网可以访问虚拟机。网段和主机相同。
+                  </p>
+                </div>
+                <div class="full-size">
+                  <p class="fragment" data-fragment-id="host-only1">
+                    虚拟机不可以访问外网，外网不可以访问虚拟机。网段和主机相同。
+                  </p>
+                </div>
+                <div class="r-stack fragment fade-in-then-out" data-fragment-id="nat-last" data-fragment-after="nat1">
+                  <img class="animated slideInLeft" src="img/chapter002/nat.png">
+                </div>
+                <div class="r-stack fragment fade-in-then-out" data-fragment-id="nat-network-last" data-fragment-after="nat-network1">
+                  <img class="animated slideInLeft" src="img/chapter002/nat-network.png">
+                </div>
+                <div class="r-stack fragment fade-in-then-out" data-fragment-id="bridged-last" data-fragment-after="bridged1">
+                  <img class="animated slideInLeft" src="img/chapter002/bridged.png">
+                </div>
+                <div class="r-stack fragment fade-in-then-out" data-fragment-after="host-only1">
+                  <img class="animated slideInLeft" src="img/chapter002/host-only.png">
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- virtual-network2 -->
+
+        <section id="virtual-network-summary">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟网络总结</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                四种虚拟网络类型总结：
+              </p>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter002/virtual-network-summary.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- virtual-network-summary -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="config-steps">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">系统配置步骤</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                整个基础环境配置包含以下步骤：
+              </p>
+              <ul>
+                <li class="fragment">下载安装VirtualBox、下载系统镜像</li>
+                <li class="fragment">最小化安装CentOS</li>
+                <li class="fragment">配置虚拟网络</li>
+                <li class="fragment">禁用防火墙和SELinux</li>
+                <li class="fragment">配置EPEL</li>
+                <li class="fragment">安装基础软件</li>
+                <li class="fragment">创建快照并克隆虚拟机</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- config-steps -->
+
+        <section id="download-centos">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">下载系统镜像</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">下载VirtualBox或者VMWare并安装，略……</p>
+              <p class="fragment">下载CentOS，推荐7.5版本，</p>
+              <p class="fragment">下载地址：https://mirrors.sohu.com/centos/7.5.1804/isos/x86_64/</p>
+              <p class="fragment">下载得到ISO镜像文件，用于后续安装</p>
+            </div>
+          </div>
+        </section> <!-- config-steps -->
+
+
+        <section id="download-centos-cast">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：下载CentOS系统</h1>
+            </div>
+            <div class="content">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "download-iso",
+                  url: "video/chapter002/下载ISO_batch.mp4",
+                  pauses: [0, 12.037508, 15.666667, 21.078979, 26.552, 30.223689, 34.208333]
+                });
+              </script>
+              <div id="download-iso-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- download centos -->
+
+        <section id="install-centos">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">最小化安装CentOS</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">创建新虚拟机</p>
+              <p class="fragment">加载ISO镜像文件进行安装</p>
+              <p class="fragment">出现安装引导界面后，点击Tab键，打开 kernel 启动选项后，增加选项：net.ifnames=0 biosdevname=0</p>
+              <p class="fragment">配置之后，系统中的网卡名称会按eth0, eth1的规则命名</p>
+              <p class="fragment">进入安装界面之后选择最小化安装</p>
+            </div>
+          </div>
+        </section> <!-- install-centos -->
+
+        <section id="install-centos-cast">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：安装最小化安装CentOS</h1>
+            </div>
+            <div class="content">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "install-centos",
+                  url: "video/chapter002/最小化安装系统_batch.mp4",
+                  pauses: [0, 42.218452, 51.266635, 59.448574, 63.100151, 136.171041, 155.488266, 219.95629]
+                });
+              </script>
+              <div id="install-centos-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- install-centos -->
+
+        <section id="config-network">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">配置网络</h1>
+            </div>
+            <div class="content">
+              <div class="r-stack full-size">
+              <div class="full-size">
+                <p class="fragment">设置Nat Network网段（192.168.56.0/255.255.255.0）</p>
+                <p class="fragment">设置Host-only网段（10.0.0.0/255.0.0.0）</p>
+                <p class="fragment">虚拟机添加网卡</p>
+                <ul>
+                  <li class="fragment">网卡一用于Nat网段</li>
+                  <li class="fragment">网卡二用于Host-only网段</li>
+                </ul>
+                <p class="fragment">
+                  编辑网卡文件，设置主机网络（文件位于/etc/sysconfig/network-script/）
+                </p>
+                <ul>
+                  <li class="fragment">网卡一对应于ifcfg-eth0</li>
+                  <li class="fragment">网卡二对应于ifcfg-eth1</li>
+                </ul>
+                <pre class="fragment"><code class="lang-shell" data-line-numbers="">
+                  <script type="text/template">
+                    IPADDR=
+                    NETMASK=
+                    GATEWAY=
+                    DNS1=
+                    DNS2=
+                  </script>
+                </code></pre>
+                <p class="fragment">配置本主机名称：/etc/hostname</p>
+                <p class="fragment">配置其他主机名称解析：/etc/hosts</p>
+                <p class="fragment">测试网络连接</p>
+              </div>
+              <div class="r-stack fragment wframe">
+                <img class="animated slideInLeft" src="img/chapter002/network-topology.png">
+              </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- config-network -->
+
+        <section id="config-network-cast">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：配置网络</h1>
+            </div>
+            <div class="content">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "configure-network",
+                  url: "video/chapter002/配置网络_batch.mp4",
+                  pauses: [0, 16.260292, 22.718758, 26.610766, 32.550911, 36.728394, 41.813532, 44.215522, 54.905441, 74.710689, 79.535097, 87.294025, 136.215074, 207.182899, 230.550398, 269.554121, 281.869729, 289.955544, 304.798296, 375.681565, 393.446643, 402.065936, 418.802391, 489.463121]
+                });
+              </script>
+              <div id="configure-network-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- configure-network -->
+
+        <section id="disable-firewall">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">禁用防火墙和SELinux</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">关闭防火墙</p>
+              <p class="fragment">临时关闭：systemctl stop firewalld</p>
+              <p class="fragment">防止自动启动：systemctl disable firewalld</p>
+              <p class="fragment">关闭SELinux</p>
+              <p class="fragment">修改配置文件：/etc/sysconfig/selinux</p>
+              <p class="fragment">
+                检查关闭是否成功
+              </p>
+            </div>
+          </div>
+        </section> <!-- disable-firewall -->
+
+        <section id="disable-firewall-cast">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：禁用防火墙和SELinux</h1>
+            </div>
+            <div class="content">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "disable-firewall",
+                  url: "video/chapter002/关闭防火墙和SELinux_batch.mp4",
+                  pauses: [0, 26.62035, 35.435178, 62.511028]
+                });
+              </script>
+              <div id="disable-firewall-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- disable-firewall -->
+
+        <section id="config-epel">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">配置EPEL源</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">EPEL的全称叫 Extra Packages for Enterprise Linux 。</p>
+              <p class="fragment">EPEL是由 Fedora 社区打造，为 RHEL 及衍生发行版如 CentOS、Scientific Linux 等提供高质量软件包的项目。</p>
+              <p class="fragment">装上了 EPEL之后，就相当于添加了一个第三方源。</p>
+              <p class="fragment">EPEL中大多数rpm包在官方repository 中是找不到的。</p>
+              <p class="fragment">此外，绝大多数rpm包要比官方repository 的rpm包版本要来得新。</p>
+              <p class="fragment">
+                默认EPEL源会连接国外服务器，下载速度非常慢，需要修改为国内源，推荐使用阿里云镜像
+              </p>
+            </div>
+          </div>
+        </section> <!-- config-epel -->
+
+        <section id="config-epel-cast">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：配置EPEL源</h1>
+            </div>
+            <div class="content">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "configure-epel",
+                  url: "video/chapter002/配置EPEL源_batch.mp4",
+                  pauses: [0, 23.442073, 32.994558, 46.645071, 66.764524, 97.935669]
+                });
+              </script>
+              <div id="configure-epel-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- config-epel -->
+
+        <section id="install-software">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">安装和配置基础软件包</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                工具软件包：
+              </p>
+              <ul>
+                <li class="fragment">
+                  net-tools vim lrzsz tree screen lsof tcpdump nc mtr nmap openssl-devel
+                </li>
+              </ul>
+              <p class="fragment">
+                服务器软件包：
+              </p>
+              <ul>
+                <li class="fragment">
+                  nginx haproxy keepalived
+                </li>
+              </ul>
+              <p class="fragment">
+                开发工具：
+              </p>
+              <ul>
+                <li class="fragment">Java和JDK</li>
+                <li class="fragment">node.js</li>
+                <li class="fragment">gcc/g++ (C/C++开发环境)</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- install-software -->
+
+        <section id="install-software-cast">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：安装基础软件</h1>
+            </div>
+            <div class="content">
+            <script>
+              vIns.push({
+                id: "install-software",
+                url: "video/chapter002/安装软件和配置开发环境_batch.mp4",
+                pauses: [0, 75.799984, 81.652107, 187.333333, 219.566758, 235.998387, 264.548628, 291.808104, 313.931985, 325.53216, 363.484283, 383.807628, 439.928943, 512.496035, 571.712626]
+              });
+            </script>
+            <div id="install-software-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- install-software -->
+
+        <section id="clone-vms">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">创建快照、克隆虚拟机</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">虚拟机配置好之后最好创建快照，这样以后有问题都可以通过快照回到最初的系统状态</p>
+              <p class="fragment">以后做未知配置之前也养成创建快照的习惯，可以避免很多麻烦</p>
+              <p class="fragment">然后将节点1的虚拟机进行克隆</p>
+              <p class="fragment">克隆完成后修改：</p>
+              <ul>
+                <li class="fragment">ifcfg-eth0网卡配置</li>
+                <li class="fragment">ifcfg-eth1网卡配置</li>
+                <li class="fragment">/etc/hostname主机名配置</li>
+              </ul>
+              <p class="fragment">所有虚拟机克隆成功之后，进行网络连通性测试</p>
+              <p class="fragment">随后宿主机配置对所有虚拟机的免密登录</p>
+              <p class="fragment">推荐node1也配置对其他三个节点的免密登录</p>
+            </div>
+          </div>
+        </section> <!-- clone-vms -->
+
+        <section id="clone-vms-cast">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：创建快照于克隆节点</h1>
+            </div>
+            <div class="content">
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "clone-vms",
+                  url: "video/chapter002/克隆建立网络_batch.mp4",
+                  pauses: [0, 12.522796, 27.497275, 38.887492, 61.057305, 70.275973, 72.877903, 129.726609, 133.192798, 149.685027, 157.833333, 161.456907, 485.345888, 511.531639, 553.751777]
+                });
+              </script>
+              <div id="clone-vms-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- clone-vms -->
+
+        <section id="thank-you-slide" class="end color--radiant">
+        </section>
+
+      </div> <!-- slides -->
+    </div> <!-- reveal -->
+
+		<script>
+      language = 'cn';
+
+      var myConfig = {
+        "math": math, 
+        "asciinema": {
+          rows: 24,
+          cols: 81
+        }
+      };
+
+      defineMyPlugins = function() {
+        myPreloadPlugins = [
+          /**** my plugins ****/
+          RevealLoadCode, RevealFragmentOrder,
+        ];
+        myPlugins = [
+          /**** built-in plugins ****/
+          /**** third-party plugins ****/
+          /**** my plugins ****/
+          RevealCodeTips, RevealFragmentGroup,
+        ];
+      }
+    </script>
+    <script src="js/common.js"></script>
+	</body>
+</html>

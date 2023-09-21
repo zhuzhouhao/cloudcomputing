@@ -1,0 +1,1468 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>temp</title>
+
+    <link rel="stylesheet" href="css/include.css" media="all">
+
+    <!-- pre-libraries -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+
+    <script src="js/define.js"></script>
+  </head>
+  <body>
+    <div class="reveal pattern--random">
+      <div class="slides">
+
+        <script>
+          courseName = "云计算";
+          chapterName = "第五章 虚拟化技术";
+          toc = [
+            {name: "虚拟化技术简介", desc: ""},
+            {name: "服务器虚拟化", desc: ""},
+            /*
+            {name: "存储虚拟化", desc: ""},
+            {name: "网络虚拟化", desc: ""},
+            */
+            {name: "虚拟化容器", desc: ""},
+            {name: "Docker", desc: ""},
+            {name: "OpenStack背景介绍", desc: ""},
+            {name: "计算服务Nova", desc: ""},
+            {name: "对象存储服务Swift", desc: ""},
+            {name: "镜像服务Glance", desc: ""},
+          ];
+        </script>
+
+        <section class="cover" id="cover"></section>
+
+        <section class="toc color--midnight" id="toc"></section>
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="what-is-virtulization">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是虚拟化</h1>
+            </div>
+            <div class="content">
+<p class="fragment">虚拟化技术是伴随着计算机的出现而产生和发展起来的，虚拟化意味着对计算机（IT）资源的抽象。</p>
+<p class="fragment">虚拟化技术已经成为构建云计算环境的两大支柱技术之一。</p>
+<p class="fragment">20世纪60年代，IBM公司推出虚拟化技术</p>
+<p class="fragment">主要用于当时的IBM大型机的服务器虚拟化</p>
+<p class="fragment">虚拟化技术的核心思想是利用软件或固件管理程序构成虚拟化层，把物理资源映射为虚拟资源。在虚拟资源上可以安装和部署多个虚拟机，实现多用户共享物理资源。</p>
+            </div>
+          </div>
+        </section> <!-- what-is-virtulization -->
+
+        <section id="virtualization-in-cloud">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟化的内容</h1>
+            </div>
+            <div class="content full-size">
+              <div class="h-parallel full-size">
+                <img class="fragment item" src="img/chapter005/server-virtualization.png" alt="" width="220">
+                <img class="fragment item" src="img/chapter005/storage-virtualization.png" alt="" width="220">
+                <img class="fragment item" src="img/chapter005/network-virtulization.png" alt="" width="220">
+                <img class="fragment item" src="img/chapter005/virtulized-container.png" alt="" width="220">
+              </div>
+            </div>
+          </div>
+        </section> <!-- virtualization-in-cloud -->
+
+        <section id="virtualization-driven">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟化是云计算的驱动力</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter005/virtualization-drivern.png" alt="">
+            </div>
+          </div>
+        </section> <!-- virtualization-driven -->
+
+        <section id="traditional-data-center">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">传统数据中心</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter005/traditional-data-center.png" alt="">
+            </div>
+          </div>
+        </section> <!-- traditional-data-center -->
+
+        <section id="virtualized-data-center">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟化数据中心</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter005/virtualized-data-center.png" alt="">
+            </div>
+          </div>
+        </section> <!-- virtualized-data-center -->
+
+        <section id="why-virtulization-in-data-center">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">为什么要进行数据中心虚拟化</h1>
+            </div>
+            <div class="content">
+<p class="fragment">随着云计算的发展，传统的数据中心逐渐过渡到虚拟化数据中心，即采用虚拟化技术将原来数据中心的物理资源进行抽象整合。</p>
+<p class="fragment"></p>
+<p class="fragment">实现资源的动态分配和调度，提高现有资源的利用率和服务可靠性</p>
+<p class="fragment">提供自动化的服务开通能力，降低运维成本</p>
+<p class="fragment">具有有效的安全机制和可靠性机制，满足公众客户和企业客户的安全需求</p>
+<p class="fragment">方便系统升级、迁移和改造</p>
+            </div>
+          </div>
+        </section> <!-- why-virtulization-in-data-center -->
+
+        <section id="virtualization-path">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">数据中心虚拟化的途径</h1>
+            </div>
+            <div class="content">
+<p class="fragment">服务器虚拟化</p>
+<p class="fragment">将一个或多个物理服务器虚拟成多个逻辑上的服务器</p>
+<p class="fragment">存储虚拟化</p>
+<p class="fragment">把分布的异构存储设备统一为一个或几个大的存储池</p>
+<p class="fragment">网络虚拟化</p>
+<p class="fragment">在底层物理网络和网络用户之间增加一个抽象层</p>
+<p class="fragment">虚拟化容器</p>
+<p class="fragment">在同一个系统上，实现资源隔离与重用，在不同设备上模拟同一环境</p>
+            </div>
+          </div>
+        </section> <!-- virtualization-path -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="server-directions">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">服务器虚拟化的两个方向</h1>
+            </div>
+            <div class="content">
+<p class="fragment">一个物理的服务器虚拟成若干个独立的逻辑服务器，比如分区；</p>
+<p class="fragment">把若干分散的物理服务器虚拟为一个大的逻辑服务器，比如网格技术；</p>
+            </div>
+          </div>
+        </section> <!-- server-directions -->
+
+        <section id="server-virtulization-levels">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">服务器虚拟化的层次</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                根据虚拟化后的服务器和物理机之间的关系，可以分为两个层次：
+              </p>
+<ul>
+  <li class="fragment">寄居虚拟化</li>
+  <li class="fragment">裸机虚拟化</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- server-virtulization-levels -->
+
+        <section id="server-virtulization-levels2" data-fragment-order>
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">服务器虚拟化的层次</h1>
+            </div>
+            <div class="content">
+              <ul class="horizontal gap" style="margin: 0 20px;">
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group1">
+寄居虚拟化
+                  </span>
+                </li>
+                <li>
+                  <span class="fragment dummy enlarge red" data-fragment-group="group2" data-fragment-with="group1">
+裸机虚拟化
+                  </span>
+                </li>
+              </ul>
+              <hr>
+              <div class="r-stack" style="margin-top: 50px;">
+                <div class="fragment full-size fade-out" data-fragment-id="group1" data-fragment-after="group1-last">
+<p class="fragment">寄居虚拟化的虚拟化层一般称为虚拟机监控器（VMM）</p>
+<p class="fragment">就操作系统层的虚拟化而言，没有独立的Hypervisor层</p>
+<p class="fragment">这类虚拟化架构系统损耗比较大</p>
+<div class="r-stack fragment" data-fragment-id="group1-last">
+  <img class="animated slideInLeft" src="img/chapter005/hosted-virtualization.png">
+</div>
+                </div>
+                <div class="full-size">
+<p class="fragment">架构中的VMM也可以认为是一个操作系统，一般称为Hypervisor</p>
+<p class="fragment">Hypervisor实现从虚拟资源到物理资源的映射</p>
+<p class="fragment">Hypervisor实现了不同虚拟机的运行上下文保护与切换，保证了各个客户虚拟系统的有效隔离</p>
+<div class="r-stack fragment">
+  <img class="animated slideInLeft" src="img/chapter005/bare-metal-virtulization.png">
+</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section> <!-- server-virtulization-levels -->
+
+        <section id="cpu-virtualization-problem">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">CPU虚拟化的问题</h1>
+            </div>
+            <div class="content">
+              <div style="display: flex;">
+                <img src="img/chapter005/cpu-virtualization-problem.png" alt="">
+                <div>
+                  <p class="fragment">VMM、GuestOS、GuestApplications都是运行在Ring 1-3用户态中的应用程序代码。</p>
+                  <p class="fragment">而CPU的特权指令只能在Ring 0层的内核态才能执行。</p>
+                  <p class="fragment">当在GuestOS中执行系统内核的特权指令时，一般都会触发异常。</p>
+                </div>
+              </div>
+              <p class="fragment">为了解决这个问题，虚拟化提出了两种方案：</p>
+              <ul>
+                <li class="fragment">全虚拟化</li>
+                <li class="fragment">半虚拟化</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- cpu-virtualization-problem -->
+
+        <section id="full-virtualization">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">全虚拟化</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">不需要对GuestOS操作系统软件的源代码做任何的修改，就可以运行在这样的VMM中</p>
+              <p class="fragment">GuestOS并不知道自己是一台虚拟机，它会认为自己就是运行在计算机物理硬件设备上的HostOS</p>
+              <p class="fragment">在触发了异常之后，这些异常就会被VMM捕获，再由VMM将这些特权指令进行虚拟化成为只针对虚拟CPU起作用的虚拟特权指令。</p>
+              <p class="fragment"><b>缺陷</b>：会存在一部分特权指令运行在Ring 1用户态上，而这些运行在Ring 1上的特权指令并不会触发异常然后再被VMM捕获。从而导致在GuestOS中执行的特权指令直接对HostOS造成了影响(即GuestOS和HostOS没能做到完全隔离)。</p>
+              <p class="fragment"><b>硬件辅助的全虚拟化</b></p>
+<p class="fragment">
+  CPU厂商们发布了能够判断特权指令归属的标准x86 CPU之后，可以实现硬件辅助的全虚拟化
+</p>
+              <p class="fragment">硬件辅助全虚拟化主要使用了支持虚拟化功能的CPU进行支撑，CPU可以明确的分辨出来自GuestOS的特权指令，并针对GuestOS进行特权操作，而不会影响到HostOS。</p>
+            </div>
+          </div>
+        </section> <!-- full-virtualization -->
+
+        <section id="para-virtualization">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">半虚拟化</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">需要对GuestOS的内核代码做一定的修改，才能够将GuestOS运行在半虚拟化的VMM中。</p>
+              <p class="fragment">半虚拟化通过在GuestOS的源代码级别上修改特权指令来回避上述的虚拟化漏洞。</p>
+              <p class="fragment">修改内核后的GuestOS也知道自己就是一台虚拟机。所以能够很好的对核心态指令和敏感指令进行识别和处理，但缺点在于GuestOS的镜像文件并不通用。</p>
+            </div>
+          </div>
+        </section> <!-- para-virtualization -->
+
+        <section id="vm-migration">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟机迁移</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                虚拟机迁移是将虚拟机实例从源宿主机迁移到目标宿主机，并且在目标宿主机上能够将虚拟机运行状态恢复到其在迁移之前相同的状态，以便能够继续完成应用程序的任务。
+              </p>
+              <div class="r-stack fragment">
+                <img class="animated slideInLeft" src="img/chapter005/vm-migration.png">
+              </div>
+            </div>
+          </div>
+        </section> <!-- vm-migration -->
+
+        <section id="vm-migration-category">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟机迁移的分类</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">虚拟机迁移可以从不同的角度来进行分类</p>
+              <p class="fragment">从虚拟机迁移的源与目的地角度可分为</p>
+              <ul>
+                <li class="fragment">物理机到虚拟机的迁移（P2V）</li>
+                <li class="fragment">虚拟机到虚拟机的迁移（V2V）</li>
+                <li class="fragment">虚拟机到物理机的迁移（V2P）</li>
+              </ul>
+              <p class="fragment">
+                从虚拟机迁移时的状态可以分为：
+              </p>
+              <ul>
+                <li class="fragment">虚拟机停机迁移（冷迁移）</li>
+                <li class="fragment">虚拟机在线迁移（热迁移、实时迁移）</li>
+              </ul>
+            </div>
+          </div>
+        </section> <!-- vm-migration-category -->
+
+        <section id="live-migration">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">实时迁移</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">实时迁移（LiveMigration），就是保持虚拟机运行的同时，把它从一个计算机迁移到另一个计算机，并在目的计算机恢复运行的技术。</p>
+              <p class="fragment">实时迁移的时机：</p>
+              <p class="fragment">云计算中心的物理服务器负载经常处于动态变化中，当一台物理服务器负载过大时，若此刻不可能提供额外的物理服务器，管理员可以将其上面的虚拟机迁移到其他服务器，达到负载平衡</p>
+              <p class="fragment">云计算中心的物理服务器有时候需要定期进行升级维护，当升级维护服务器时，管理员可以将其上面的虚拟机迁移到其他服务器，等升级维护完成之后，再把虚拟机迁移回来</p>
+            </div>
+          </div>
+        </section> <!-- live-migration -->
+
+        <section id="live-migration-steps">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟机实时迁移的步骤</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">步骤1：预迁移（Pre-Migration）</p>
+              <p class="fragment">步骤2：预定资源（Reservation）</p>
+              <p class="fragment">步骤3：预复制（InterativePre-Copy）</p>
+              <p class="fragment">步骤4：停机复制（Stop-and-Copy）</p>
+              <p class="fragment">步骤5：提交（Commitment）</p>
+              <p class="fragment">步骤6：启动（Activation）</p>
+            </div>
+          </div>
+        </section> <!-- live-migration-steps -->
+
+        <section id="memory-migration">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">内存迁移</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                存的迁移是虚拟机实时迁移最困难的部分，也是最大的障碍
+              </p>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <p><strong>迁移方案</strong></p>
+                    </td>
+                    <td>
+                      <p><strong>优势与劣势</strong></p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Stop-and-Copy</p>
+                    </td>
+                    <td>
+                      <p>l方法比较简单</p>
+                      <p>l总迁移时间也最短</p>
+                      <p>l停机时间无法接受</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Stop-and-Copy和Pull阶段结合</p>
+                    </td>
+                    <td>
+                      <p>l停机时间很短</p>
+                      <p>l总迁移时间很长</p>
+                      <p>lPull阶段复制造成的性能下降</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>Push和Stop-and-Copy阶段结合</p>
+                    </td>
+                    <td>
+                      <p>l平衡了停机时间和总迁移时间之间的矛盾</p>
+                      <p>l需要有一种算法能够测定工作集，以避免反复重传</p>
+                      <p>l可能会占用大量的网络带宽，对其他服务造成影响</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section> <!-- memory-migration -->
+
+        <section id="storage-migration">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">存储设备的迁移</h1>
+            </div>
+            <div class="content">
+<p class="fragment">迁移存储设备的最大障碍在于需要占用大量时间和网络带宽，通常的解决办法是以共享的方式共享数据和文件系统，而非真正迁移。</p>
+<p class="fragment">目前大多数集群使用NAS（Network Attached Storage，网络连接存储）作为存储设备共享数据。</p>
+<p class="fragment">NAS实际上是一个带有瘦服务器的存储设备，其作用类似于一个专用的文件服务器。</p>
+<p class="fragment">在局域网环境下，NAS已经完全可以实现异构平台之间，如NT、UNIX等的数据级共享。</p>
+<p class="fragment">分布式存储的迁移更加简单</p>
+            </div>
+          </div>
+        </section> <!-- storage-migration -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="virtual-container">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">虚拟化容器</h1>
+            </div>
+            <div class="content">
+容器技术是一种全新意义上的虚拟化技术，按分类或者实现方式分类，属于操作系统虚拟化的范畴，也就是在由操作系统提供虚拟化的支持， 操作系统提供接口，能够让应用程序间可以互不干扰的独立运行，并且能够对其在运行中所使用的资源进行管理 。
+            </div>
+          </div>
+        </section> <!-- virtual-container -->
+
+        <section id="container-features">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">容器的特点</h1>
+            </div>
+            <div class="content">
+<p class="fragment">容器技术更多的是和虚拟机技术hypervisor来进行对比</p>
+<p class="fragment">传统的虚拟机技术，创建环境和部署应用都很麻烦，而且应用的移植性也很繁琐，</p>
+<p class="fragment">比如你要把VMware里的虚拟机迁移到KVM里就很繁琐（需要做镜像格式的转换）</p>
+<p class="fragment">容器技术主要有三个特点：</p>
+    <ul>
+      <li class="fragment">极其轻量：只打包了必要的Bin/Lib；</li>
+      <li class="fragment">秒级部署：根据镜像的不同，容器的部署大概在毫秒与秒之间（比虚拟机强很多）；</li>
+      <li class="fragment">易于移植：一次构建，随处部署；</li>
+      <li class="fragment">弹性伸缩：Kubernetes、Swam、Mesos这类开源、方便、好使的容器管理平台有着非常强大的弹性管理能力。</li>
+    </ul>
+            </div>
+          </div>
+        </section> <!-- container-features -->
+
+        <section id="container-standard">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">容器的标准</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">容器世界里并不是只有docker一家。既然不是一家就很容易出现分歧。任何技术出现都需要一个标准来规范它，不然各搞各的很容易导致技术实现的碎片化，出现大量的冲突和冗余。</p>
+              <p class="fragment">2015年，由Google，Docker、CoreOS、IBM、微软、红帽等厂商联合发起的OCI（Open Container Initiative）组织成立了，并于2016年4月推出了第一个开放容器标准。</p>
+              <p class="fragment">标准主要包括runtime运行时标准和image镜像标准。</p>
+              <p class="fragment">标准的推出，有助于替成长中市场带来稳定性，让企业能放心采用容器技术，用户在打包、部署应用程序后，可以自由选择不同的容器Runtime；同时，镜像打包、建立、认证、部署、命名也都能按照统一的规范来做。</p>
+    <p class="fragment">
+      容器运行时标准 （runtime spec）
+    </p>
+<ul>
+  <li class="fragment">creating：使用 create 命令创建容器，这个过程称为创建中 </li>
+  <li class="fragment">created：容器创建出来，但是还没有运行，表示镜像和配置没有错误，容器能够运行在当前平台 </li>
+  <li class="fragment">running：容器的运行状态，里面的进程处于 up 状态，正在执行用户设定的任务 </li>
+  <li class="fragment">stopped：容器运行完成，或者运行出错，或者 stop 命令之后，容器处于暂停状态。这个状态，容器还有很多信息保存在平台中，并没有完全被删除</li>
+</ul>
+    <p class="fragment">
+      容器镜像标准（image spec）
+    </p>
+<ul>
+  <li class="fragment">文件系统：以 layer 保存的文件系统，每个 layer 保存了和上层之间变化的部分，layer 应该保存哪些文件，怎么表示增加、修改和删除的文件等; </li>
+  <li class="fragment">config 文件：保存了文件系统的层级信息（每个层级的 hash 值，以及历史信息），以及容器运行时需要的一些信息（比如环境变量、工作目录、命令参数、mount 列表），指定了镜像在某个特定平台和系统的配置。比较接近我们使用 docker inspect &lt;image_id&gt; 看到的内容; </li>
+  <li class="fragment">manifest 文件：镜像的 config 文件索引，有哪些 layer，额外的 annotation 信息，manifest 文件中保存了很多和当前平台有关的信息; </li>
+  <li class="fragment">index 文件：可选的文件，指向不同平台的 manifest 文件，这个文件能保证一个镜像可以跨平台使用，每个平台拥有不同的 manifest 文件，使用 index 作为索引。</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- container-standard -->
+
+        <section class="subsection color--radiant">
+        </section>
+
+        <section id="what-is-docker">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是Docker</h1>
+            </div>
+            <div class="content">
+<p class="fragment">Docker 是一个开源的应用容器引擎，基于 Go 语言 并遵从 Apache2.0 协议开源。</p>
+<p class="fragment">Docker 可以让开发者打包他们的应用以及依赖包到一个轻量级、可移植的容器中，然后发布到任何流行的 Linux 机器上，也可以实现虚拟化。</p>
+<p class="fragment">容器是完全使用沙箱机制，相互之间不会有任何接口（类似 iPhone 的 app）,更重要的是容器性能开销极低。</p>
+            </div>
+          </div>
+        </section> <!-- what-is-docker -->
+
+        <section id="docker-versions">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Docker的不同版本</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  Docker 从 17.03 版本之后分为两个版本：
+</p>
+<ul>
+  <li class="fragment">CE（Community Edition: 社区版） ，开源，任何人都可以使用</li>
+  <li class="fragment">EE（Enterprise Edition: 企业版），被列入美国实体清单的企业无法使用</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- docker-versions -->
+
+        <section id="docker-scenarios">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Docker的应用场景</h1>
+            </div>
+            <div class="content">
+<p class="fragment">Web 应用的自动化打包和发布。</p>
+<p class="fragment">自动化测试和持续集成、发布。</p>
+<p class="fragment">在服务型环境中部署和调整数据库或其他的后台应用。</p>
+<p class="fragment">从头编译或者扩展现有的 OpenShift 或 Cloud Foundry 平台来搭建自己的 PaaS 环境。</p>
+            </div>
+          </div>
+        </section> <!-- docker-scenarios -->
+
+        <section id="docker-architecture">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Docker架构</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  Docker 包括三个基本概念:
+</p>
+<ul>
+  <li class="fragment">镜像（Image）：Docker 镜像（Image），就相当于是一个 root 文件系统。比如官方镜像 ubuntu:16.04 就包含了完整的一套 Ubuntu16.04 最小系统的 root 文件系统。</li>
+  <li class="fragment">容器（Container）：镜像（Image）和容器（Container）的关系，就像是面向对象程序设计中的类和实例一样，镜像是静态的定义，容器是镜像运行时的实体。容器可以被创建、启动、停止、删除、暂停等。</li>
+  <li class="fragment">仓库（Repository）：仓库可看成一个代码控制中心，用来保存镜像。</li>
+</ul>
+<p class="fragment">
+  Docker 使用客户端-服务器 (C/S) 架构模式，使用远程API来管理和创建Docker容器。Docker 容器通过 Docker 镜像来创建。
+</p>
+            </div>
+          </div>
+        </section> <!-- docker-architecture -->
+
+        <section id="docker-architecture2">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Docker的架构</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter005/docker-architecture.png" alt="">
+<p class="fragment">Image： 镜像是用于创建 Docker 容器的模板，比如 Ubuntu 系统。 </p>
+<p class="fragment">Container：容器是独立运行的一个或一组应用，是镜像运行时的实体。</p>
+<p class="fragment">Client：Docker 客户端通过命令行或者其他工具使用 SDK 与 守护进程通信。</p>
+<p class="fragment">Host：一个物理或者虚拟的机器用于执行 Docker 守护进程和容器。</p>
+<p class="fragment">Registry：Docker 仓库用来保存镜像，可以理解为代码控制中的代码仓库。</p>
+<p class="fragment">Machine：简化Docker安装的命令行工具，通过一个简单的命令行即可在相应的平台上安装Docker。</p>
+            </div>
+          </div>
+        </section> <!-- docker-architecture2 -->
+
+        <section id="docker-install">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Docker安装</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">无论是Ubuntu还是CentOs，仓库中软件版本都比较老</p>
+<p class="fragment">推荐使用官方安装脚本自动安装（用阿里云镜像）：</p>
+<p class="fragment">curl -fsSL https://get.docker.com | bash -s docker --mirror Aliyun</p>
+<p class="fragment">无论是Ubuntu还是CentOs安装脚本都是一样的</p>CentOs安装脚本都是一样的
+<p class="fragment">
+  Docker官网：https://www.docker.com （慢！）
+</p>
+            </div>
+          </div>
+        </section> <!-- docker-install -->
+
+        <section id="docker-hello-world">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Docker Hello world</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  Docker 允许你在容器内运行应用程序， 使用 docker run 命令来在容器内运行一个应用程序。
+</p>
+<pre class="fragment"><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+docker run ubuntu:15.10 /bin/echo "Hello world"
+  </script>
+</code></pre>
+<p class="fragment">
+  意义Docker 以 ubuntu15.10 镜像创建一个新容器，然后在容器里执行 bin/echo "Hello world"，然后输出结果。
+</p>
+<p class="fragment">
+  各个参数解析：
+</p>
+<ul>
+  <li class="fragment">docker: Docker 的二进制执行文件。</li>
+  <li class="fragment">run: 与前面的 docker 组合来运行一个容器。</li>
+  <li class="fragment">ubuntu:15.10 指定要运行的镜像，Docker 首先从本地主机上查找镜像是否存在，如果不存在，Docker 就会从镜像仓库 Docker Hub 下载公共镜像。</li>
+  <li class="fragment">/bin/echo "Hello world": 在启动的容器里执行的命令</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- docker-hello-world -->
+
+        <section id="interactive-container">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">交互式的容器</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  通过 docker 的两个参数 -i -t，让 docker 运行的容器实现"对话"的能力
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+docker run -i -t ubuntu:15.10 /bin/bash
+  </script>
+</code></pre>
+<p class="fragment">
+  各个参数解析：
+</p>
+<ul>
+  <li class="fragment">-t: 在新容器内指定一个伪终端或终端。</li>
+  <li class="fragment">-i: 允许你对容器内的标准输入 (STDIN) 进行交互。</li>
+</ul>
+<p class="fragment">可以通过运行 exit 命令或者使用 CTRL+D 来退出容器。</p>
+<p class="fragment">--name参数可以为容器指定一个名字</p>
+            </div>
+          </div>
+        </section> <!-- interactive-container -->
+
+        <section id="start-container">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">启动容器（后台模式）</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  以进程方式运行的容器
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker run -d ubuntu:15.10 /bin/sh -c "while true; do echo hello world; sleep 1; done“
+  </script>
+</code></pre>
+<p class="fragment">运行结果中看不到期望的 “hello world”</p>
+<p class="fragment">而是一串长字符，这个长字符串叫做容器 ID，对每个容器来说都是唯一的</p>
+<p class="fragment">我们可以通过容器 ID 来查看对应的容器发生了什么</p>
+            </div>
+          </div>
+        </section> <!-- start-container -->
+
+        <section id="view-container-status">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">查看容器的状态</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                可以通过 docker ps 来查看运行中的容器：
+              </p>
+              <pre><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+$ docker ps
+CONTAINER ID        IMAGE                  COMMAND              ...  
+5917eac21c36        ubuntu:15.10           "/bin/sh -c 'while t…"    ...
+                </script>
+              </code></pre>
+<p class="fragment">CONTAINER ID: 容器 ID。IMAGE: 使用的镜像。COMMAND: 启动容器时运行的命令。CREATED: 容器的创建时间。</p>
+<p class="fragment">STATUS: 容器状态。</p>
+<p class="fragment">状态有7种：created（已创建）、restarting（重启中）、running 或 Up（运行中）、removing（迁移中）、paused（暂停）、exited（停止）、dead（死亡）</p>
+<p class="fragment">PORTS: 容器的端口信息和使用的连接类型（tcp\udp）。NAMES: 自动分配的容器名称。</p>
+<p class="fragment">-a参数可以查看所有容器。</p>
+            </div>
+          </div>
+        </section> <!-- view-container-status -->
+
+        <section id="view-container-std-out">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">查看容器内的标准输出</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  若一个容器后台运行，我们无法直接看到其执行的输出，但可以通过命令docker logs查看容器内部的输出：
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker logs 2b1b7a428627
+  </script>
+</code></pre>
+<p class="fragment">
+  logs后面的参数可以是容器的ID或者容器的名字
+</p>
+            </div>
+          </div>
+        </section> <!-- view-container-std-out -->
+
+        <section id="stop-container">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">停止容器</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  docker stop命令可以停止容器
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+    $docker stop 2b1b7a428627
+  </script>
+</code></pre>
+<p class="fragment">
+  命令的参数可以是容器的ID或者容器的名字
+</p>
+            </div>
+          </div>
+        </section> <!-- stop-container -->
+
+        <section id="get-image">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">获取镜像</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                如果我们本地没有 Ubuntu 镜像，我们可以使用 docker pull 命令来从远程仓库中载入 Ubuntu 镜像：
+              </p>
+              <pre><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+$ docker pull ubuntu
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- get-image -->
+
+        <section id="enter-container">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">进入容器</h1>
+            </div>
+            <div class="content">
+<p class="fragment">在使用 -d 参数时，容器启动后会进入后台，则无论是否使用-it参数都无法直接交互。</p>
+<p class="fragment">此时可以通过以下指令进入交互模式：</p>
+<ul>
+  <li class="fragment">docker attach：退出会导致容器停止</li>
+  <li class="fragment">docker exec：推荐使用 docker exec 命令，因为此退出容器终端，不会导致容器的停止。</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- enter-container -->
+
+        <section id="remove-container">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">删除容器</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  删除容器使用 docker rm 命令：
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker rm -f 1e560fca3906
+  </script>
+</code></pre>
+<p class="fragment">参数可以是容器的ID或者名字</p>
+<p class="fragment">-f参数表示</p>
+            </div>
+          </div>
+        </section> <!-- remove-container -->
+
+        <section id="network-port">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">网络端口</h1>
+            </div>
+            <div class="content">
+<p class="fragment">容器内程序所监听的端口可以映射到外部（真实机器中）</p>
+<p class="fragment">除了使用docker ps命令可以查看端口映射之外</p>
+<p class="fragment">还可以使用专用命令docker port命令查看</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker port bf08b7f2cd89
+5000/tcp -> 0.0.0.0:5000
+  </script>
+</code></pre>
+<p class="fragment">
+  上面的运行结果表明把容器内部的TCP端口5000映射到外部
+</p>
+            </div>
+          </div>
+        </section> <!-- network-port -->
+
+        <section id="view-container-process">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">查看容器的进程</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  可以使用 docker top 来查看容器内部运行的进程
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker top wizardly_chandrasekhar
+UID     PID         PPID          ...       TIME                CMD
+root    23245       23228         ...       00:00:00            python app.py
+  </script>
+</code></pre>
+<p class="fragment">
+  命令列出了容器内进程的CPU占用情况，并且按降序排列
+</p>
+            </div>
+          </div>
+        </section> <!-- view-container-process -->
+
+        <section id="list-images">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">列出镜像列表</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  可以使用 docker images 来列出本地主机上的镜像
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker images           
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+ubuntu              14.04               90d5884b1ee0        5 days ago          188 MB
+php                 5.6                 f40e9e0f10c8        9 days ago          444.8 MB
+nginx               latest              6f8d099c3adc        12 days ago         182.7 MB
+  </script>
+</code></pre>
+    <ul>
+      <li class="fragment">REPOSITORY：表示镜像的仓库源</li>
+      <li class="fragment">TAG：镜像的标签</li>
+      <li class="fragment">IMAGE ID：镜像ID</li>
+      <li class="fragment">CREATED：镜像创建时间</li>
+      <li class="fragment">SIZE：镜像大小</li>
+    </ul>
+<p class="fragment">
+同一仓库源可以有多个 TAG，代表这个仓库源的不同个版本，如 ubuntu 仓库源里，有 15.10、14.04 等多个不同的版本
+</p>
+            </div>
+          </div>
+        </section> <!-- list-images -->
+
+        <section id="search-images">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">查找镜像</h1>
+            </div>
+            <div class="content">
+<p class="fragment">我们可以从 Docker Hub 网站来搜索镜像</p>
+<p class="fragment">Docker Hub 网址为： https://hub.docker.com/</p>
+<p class="fragment">也可以使用 docker search 命令来搜索镜像：</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$  docker search httpd
+  </script>
+</code></pre>
+            </div>
+          </div>
+        </section> <!-- search-images -->
+
+        <section id="remove-image">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">删除镜像</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">
+                镜像删除使用 docker rmi 命令，比如我们删除 hello-world 镜像：
+              </p>
+              <pre><code class="lang-sh" data-line-numbers="">
+                <script type="text/template">
+$ docker rmi hello-world
+                </script>
+              </code></pre>
+            </div>
+          </div>
+        </section> <!-- remove-image -->
+
+        <section id="modify-image">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">修改镜像</h1>
+            </div>
+            <div class="content">
+              <p class="fragment">有时候从仓库中下载的镜像不完全符合我们的需求，我们可以针对已有镜像进行修改，然后保存成一个全新的镜像：</p>
+              <p class="fragment">首先，基于已有镜像启动一个容器，并进入交互模式：</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker run -t -i ubuntu:15.10 /bin/bash
+  </script>
+</code></pre>
+<p class="fragment">然后，在交互模式下对容器内容进行修改，例如更新系统、新装软件、删除内容等</p>
+<p class="fragment">完成后，输入 exit 命令来退出这个容器，并记住容器的ID</p>
+<p class="fragment">最后，通过命令 docker commit 来提交容器副本：</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker commit -m="has update" -a="rainsia" e218edb10161 ubuntu:v2
+  </script>
+</code></pre>
+<ul>
+  <li class="fragment">-m: 提交的描述信息</li>
+  <li class="fragment">-a: 指定镜像作者</li>
+  <li class="fragment">e218edb10161：容器 ID</li>
+  <li class="fragment">ubuntu:v2: 指定要创建的目标镜像名</li>
+</ul>
+
+            </div>
+          </div>
+        </section> <!-- modify-image -->
+
+        <section id="tag-image">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">镜像标签</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  可以使用 docker tag 命令，为镜像添加一个新的标签：
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker tag 860c279d2fec centos:dev
+  </script>
+</code></pre>
+<p class="fragment">docker tag 镜像ID，这里是 860c279d2fec ,用户名称、镜像源名(repository name)和新的标签名(tag)</p>
+<p class="fragment">如果多次指定tag，那么同一个镜像会有多个tag</p>
+            </div>
+          </div>
+        </section> <!-- tag-image -->
+
+        <section id="port-mapping">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">端口映射</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  容器中可以运行一些网络应用，要让外部也可以访问这些应用，可以通过 -P 或 -p 参数来指定端口映射。
+</p>
+<ul>
+  <li class="fragment">-P :是容器内部端口随机映射到主机的高端口。</li>
+  <li class="fragment">-p : 是容器内部端口绑定到指定的主机端口。</li>
+</ul>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker run -d -p 5000:5000 training/webapp python app.py
+$ docker ps
+CONTAINER ID        IMAGE               COMMAND           ...           PORTS                     NAMES
+33e4523d30aa        training/webapp     "python app.py"   ...   0.0.0.0:5000->5000/tcp    berserk_bartik
+fce072cc88ce        training/webapp     "python app.py"   ...   0.0.0.0:32768->5000/tcp   grave_hopper
+  </script>
+</code></pre>
+<p class="fragment">
+  我们可以指定容器绑定的网络地址，比如绑定 127.0.0.1
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker run -d -p 127.0.0.1:5001:5000 training/webapp python app.py
+  </script>
+</code></pre>
+            </div>
+          </div>
+        </section> <!-- port-mapping -->
+
+        <section id="mount-dir">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Docker 挂载目录</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  在Docker run的时候可以使用-v参数指定将本地路径（真实机器）挂载到容器路径中：
+</p>
+<pre><code class="lang-sh" data-line-numbers="">
+  <script type="text/template">
+$ docker run --name some-nginx -v /some/content:/usr/share/nginx/html:ro -d nginx
+  </script>
+</code></pre>
+            </div>
+          </div>
+        </section> <!-- mount-dir -->
+
+        <section id="docker-install-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：安装Docker</h1>
+            </div>
+            <div class="content">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "install-docker",
+                  url: "video/chapter005/安装Docker_batch.mp4",
+                  pauses: [0]
+                });
+              </script>
+              <div id="install-docker-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- redis-install-demo -->
+
+        <section id="edit-docker-image-demo">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">演示：编辑Docker镜像</h1>
+            </div>
+            <div class="content">
+              
+              <div class="vh-center full-size">
+                <h1>视频演示</h1>
+              </div>
+              <script>
+                vIns.push({
+                  id: "edit-docker-image",
+                  url: "video/chapter005/修改Docker镜像_batch.mp4",
+                  pauses: [0]
+                });
+              </script>
+              <div id="edit-docker-image-video-fragment-container"></div>
+            </div>
+          </div>
+        </section> <!-- redis-install-demo -->
+
+        <section id="what-is-open-stack">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">OpenStack</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  既是一个社区，也是一个项目和一个开源软件，提供了一个部署云的操作平台或工具集。用OpenStack易于构建虚拟计算或存储服务的云，既可以为公有云、私有云，也可以为大云、小云提供可扩展、灵活的云计算。
+</p>
+<p class="fragment">
+OpenStack是一个管理计算、存储和网络资源的数据中心云计算开放平台，通过一个仪表板，为管理员提供了所有的管理控制，同时通过Web界面为其用户提供资源。
+</p>
+<ul>
+  <li class="fragment">Rackspace公司：“云文件”平台（Swift）</li>
+  <li class="fragment">美国宇航局NASA：“星云”平台（Nova）</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- what-is-open-stack -->
+
+        <section id="management-objective">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">OpenStack的管理目标</h1>
+            </div>
+            <div class="content">
+<p class="fragment">计算资源管理</p>
+<p class="fragment">OpenStack可以规划并管理大量虚拟机，从而允许企业或服务提供商按需提供计算资源</p>
+<p class="fragment">存储资源管理</p>
+<p class="fragment">OpenStack可以为云服务或云应用提供所需的对象及块存储资源</p>
+<p class="fragment">网络资源管理</p>
+<p class="fragment">IP地址的数量、路由配置、安全规则将爆炸式增长；传统的网络管理技术无法真正高扩展、高自动化地管理下一代网络</p>
+            </div>
+          </div>
+        </section> <!-- management-objective -->
+
+        <section id="open-stack-versions">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">OpenStack的版本</h1>
+            </div>
+            <div class="content">
+<p class="fragment">OpenStack从发布到现在经历过很多版本</p>
+<p class="fragment">它的版本代号很复杂，但是确有一个有趣的规律：</p>
+<p class="fragment">每个版本的代号，是从A到Z的单词，而这个单词是个地名（OpenStack会议的名字）</p>
+            </div>
+          </div>
+        </section> <!-- open-stack-versions -->
+
+        <section id="open-stack-core-services">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">OpenStack的核心服务</h1>
+            </div>
+            <div class="content">
+<p class="fragment">
+  OpenStack有三个核心的服务成员：计算服务（Nova）、存储服务（Swift）、镜像服务（Glance）
+</p>
+<img src="img/chapter006/main-services.png" alt="">
+            </div>
+          </div>
+        </section> <!-- open-stack-main-services -->
+
+        <section id="open-stack-main-services">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">OpenStack的主要服务</h1>
+            </div>
+            <div class="content">
+<p class="fragment">1．计算服务Nova</p>
+<p class="fragment">2．对象存储服务Swift</p>
+<p class="fragment">3．镜像服务Glance</p>
+<p class="fragment">4．身份认证服务keystone</p>
+<p class="fragment">5．网络管理服务Quantum</p>
+<p class="fragment">6．存储管理服务Cinder</p>
+<p class="fragment">7．仪表盘Horizon</p>
+            </div>
+          </div>
+        </section> <!-- open-stack-main-services -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="nova-service">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">计算服务：Nova</h1>
+            </div>
+            <div class="content">
+<p class="fragment">Nova是OpenStack云中的计算组织控制器</p>
+<p class="fragment">Nova处理OpenStack云中实例（instances）生命周期的所有活动。这样使得Nova成为一个负责管理计算资源、网络、认证、所需可扩展性的平台。</p>
+<p class="fragment">但是，Nova并不具有虚拟化能力，相反它使用Libvirt API来与被支持的Hypervisors交互。Nova通过一个与Amazon Web Services（AWS）EC2 API兼容的Web Services API来对外提供服务。</p>
+            </div>
+          </div>
+        </section> <!-- nova-service -->
+
+        <section id="nova-components">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Nova的组件</h1>
+            </div>
+            <div class="content">
+<p class="fragment">1．API Server（Nova-Api）</p>
+<p class="fragment">API Server对外提供一个与云基础设施交互的接口，也是外部可用于管理基础设施的唯一组件。</p>
+<p class="fragment">2．Message Queue（Rabbit MQ Server）</p>
+<p class="fragment">OpenStack节点之间通过消息队列使用AMQP（Advanced Message Queue Protocol）完成通信。</p>
+<p class="fragment">3．Compute Worker（Nova-Compute）</p>
+<p class="fragment">Compute Worker管理实例生命周期，通过Message Queue接收实例生命周期管理的请求，并承担操作工作。</p>
+<p class="fragment">4．Network Controller（Nova-Network）</p>
+<p class="fragment">Network Controller处理主机的网络配置，包括IP地址分配、为项目配置VLAN、实现安全组、配置计算节点网络。</p>
+<p class="fragment">5．Volume Workers（Nova-Volume）</p>
+<p class="fragment">Volume Workers用来管理基于LVM（Logical Volume Manager）的实例卷。Volume Workers有卷的相关功能，例如新建卷、删除卷、为实例附加卷、为实例分离卷。</p>
+<p class="fragment">6．Scheduler（Nova-Scheduler）</p>
+<p class="fragment">调度器Scheduler把Nova-API调用映射为OpenStack组件。调度器作为一个Nova-Schedule守护进程运行，通过恰当的调度算法从可用资源池获得一个计算服务。</p>
+            </div>
+          </div>
+        </section> <!-- nova-components -->
+
+        <section id="libvirt">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">LibVirt简介</h1>
+            </div>
+            <div class="content">
+<p class="fragment">Nova通过独立的软件管理模块实现XenServer、Hyper-V和VMWare ESX的调用与管理</p>
+<p class="fragment">同时对于其他的Hypervisor，如KVM、LXC、QEMU、UML和Xen则通过Libvirt标准接口统一实现</p>
+<p class="fragment">为了更好地理解在Nova环境下Libvirt如何管理底层的Hypervisor，先要基本了解Libvirt的体系架构与实现方法。</p>
+            </div>
+          </div>
+        </section> <!-- libvirt -->
+
+        <section id="what-is-libvirt">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">什么是LibVirt</h1>
+            </div>
+            <div class="content">
+<p class="fragment">各种不同的虚拟化技术都提供了基本的管理工具，比如启动、停用、配置、连接控制台等。这样在构建云管理的时候就存在两个问题。</p>
+<p class="fragment">如果采用混合虚拟技术，上层就需要对不同的虚拟化技术调用不同管理工具，很是麻烦。</p>
+<p class="fragment">可能有新的虚拟化技术更加符合现在的应用场景，需要迁移过去。这样管理平台就需要大幅改动。</p>
+<p class="fragment">Libvirt的主要目标是为各种虚拟化工具提供一套方便、可靠的编程接口，用一种单一的方式管理多种不同的虚拟化提供方式。</p>
+            </div>
+          </div>
+        </section> <!-- what-is-libvirt -->
+
+        <section id="libvirt-main-services">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">LibVirt的主要支持功能</h1>
+            </div>
+            <div class="content">
+<p class="fragment"><b>虚拟机管理</b></p>
+<p class="fragment">包括不同的领域生命周期操作，，支持多种设备类型的热插拔操作</p>
+<p class="fragment"><b>远程机器支持</b></p>
+<p class="fragment">只要机器上运行了Libvirt Daemon，所有的Libvirt功能就都可以访问和使用</p>
+<p class="fragment"><b>存储管理</b></p>
+<p class="fragment">任何运行了Libvirt Daemon的主机都可以用来管理不同类型的存储,创建不同格式的文件镜像</p>
+<p class="fragment"><b>网络接口管理</b></p>
+<p class="fragment">任何运行了Libvirt Daemon的主机都可以用来管理物理和逻辑的网络接口。</p>
+<p class="fragment"><b>虚拟NAT和基于路由的网络</b></p>
+<p class="fragment">任何运行了Libvirt Daemon的主机都可以用来管理和创建虚拟网络。</p>
+            </div>
+          </div>
+        </section> <!-- libvirt-main-services -->
+
+        <section id="vm-management-without-libvirt">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">无Libvirt虚拟机管理方式</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter006/without-libvirt.png" alt="">
+            </div>
+          </div>
+        </section> <!-- vm-management-without-libvirt -->
+
+        <section id="libvirt-architecture">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">LibVirt的体系结构</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter006/libvirt-architecture.png" alt="">
+            </div>
+          </div>
+        </section> <!-- libvirt-architecture -->
+
+        <section id="libvirt-same-node">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">同一节点的管理</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter006/same-node.png" alt="">
+            </div>
+          </div>
+        </section> <!-- libvirt-same-node -->
+
+        <section id="libvirt-diff-node">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">不同节点的应用管理</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter006/diff-node.png" alt="">
+            </div>
+          </div>
+        </section> <!-- libvirt-diff-node -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="swift">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">对象存储服务Swift</h1>
+            </div>
+            <div class="content">
+<p class="fragment">Swift是一种可扩展的对象存储系统</p>
+<p class="fragment">比如复制和存档数据，图像或视频服务，存储次级静态数据，开发数据存储整合的新应用，存储容量难以估计的数据，为Web应用创建基于云的弹性存储。</p>
+<p class="fragment">提供如下特性：</p>
+<ul>
+  <li class="fragment">扩展性</li>
+  <li class="fragment">冗余性</li>
+  <li class="fragment">持久性</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- swift -->
+
+        <section id="swift-features">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Swift具有如下特性</h1>
+            </div>
+            <div class="content">
+<p class="fragment">1.高数据持久性</p>
+<p class="fragment">数据的可靠性，是指数据存储到系统中后，到某一天数据丢失的可能性。</p>
+<p class="fragment">2.完全对称的系统架构</p>
+<p class="fragment">“对称”意味着Swift中各节点可以完全对等，能极大地降低系统维护成本。</p>
+<p class="fragment">3.无限的可扩展性</p>
+<p class="fragment">一是数据存储容量无限可扩展，二是Swift性能（如QPS、吞吐量等）可线性提升。</p>
+<p class="fragment">4.无单点故障</p>
+<p class="fragment">整个Swift集群中，也没有一个角色是单点的，并且在架构和设计上保证无单点业务是有效的。</p>
+<p class="fragment">5.简单、可依赖</p>
+<p class="fragment">简单体现在实现易懂、架构优美、代码整洁；可依赖是指Swift经测试、分析之后，可以放心大胆地将Swift用于最核心的存储业务上</p>
+            </div>
+          </div>
+        </section> <!-- swift-features -->
+
+        <section id="swift-application">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Swift的应用</h1>
+            </div>
+            <div class="content">
+<p class="fragment">网盘类产品的存储引擎</p>
+<p class="fragment">为Glance存储镜像文件</p>
+<p class="fragment">存储日志文件</p>
+<p class="fragment">数据备份仓库</p>
+            </div>
+          </div>
+        </section> <!-- swift-application -->
+
+        <section class="subsection color--radiant"></section>
+
+        <section id="glance">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">镜像服务Glance</h1>
+            </div>
+            <div class="content">
+<p class="fragment">Glance提供了一个虚拟磁盘镜像的目录和存储仓库，并且可以提供对虚拟机镜像的存储和检索。这些磁盘镜像常常广泛应用于OpenStack Compute组件之中。</p>
+<p class="fragment">三种形式加以配置：</p>
+<ul>
+  <li class="fragment">利用OpenStack对象存储机制来存储镜像</li>
+  <li class="fragment">利用Amazon的简单存储解决方案（简称S3）直接存储信息</li>
+  <li class="fragment">将S3存储与对象存储结合起来，作为S3访问的连接器</li>
+</ul>
+            </div>
+          </div>
+        </section> <!-- glance -->
+
+        <section id="glance-function">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Glance的作用</h1>
+            </div>
+            <div class="content">
+<p class="fragment">Glance作为OpenStack的虚拟机的Image（镜像）服务，提供了一系列的REST API，用来管理、查询虚拟机的镜像，它支持多种后端存储介质</p>
+<p class="fragment">通过Glance，Opentack的3个模块被链接成了一个整体，Glance为Nova提供镜像的查找操作，而Swift又为Glance提供实际的存储服务，Swift可以看成Glacne存储接口的一个具体实现。</p>
+            </div>
+          </div>
+        </section> <!-- glance-function -->
+
+        <section id="glance-components">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Glance的组件</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter006/glance-components.png" alt="">
+            </div>
+          </div>
+        </section> <!-- glance-components -->
+
+        <section id="galnce-storage">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Glace支持的存储介质</h1>
+            </div>
+            <div class="content">
+<p class="fragment">OpenStack Object Storage：它是OpenStack中高可用的对象存储项目。</p>
+<p class="fragment">FileSystem：OpenStack Image Service存储虚拟机镜像的默认后端是后端文件系统。</p>
+<p class="fragment">S3：该后端允许OpenStack Image Service存储虚拟机镜像在Amazon S3服务中。</p>
+<p class="fragment">HTTP：OpenStack Image Service能通过HTTP在Internet上读取可用的虚拟机镜像。</p>
+            </div>
+          </div>
+        </section> <!--  -->
+
+        <section id="glance-workflow">
+          <div class="grid-wrapper">
+            <div class="header">
+              <div class="logo"></div>
+              <h1 class="header">Glance的工作流程</h1>
+            </div>
+            <div class="content">
+              <img src="img/chapter006/glance-process.png" alt="">
+            </div>
+          </div>
+        </section> <!-- glance-workflow -->
+
+
+        <section id="thank-you-slide" class="end color--radiant"></section>
+
+      </div> <!-- slides -->
+    </div> <!-- reveal -->
+
+    <script>
+      language = 'cn';
+
+      var myConfig = {
+        "math": math, 
+        "asciinema": {
+          rows: 24,
+          cols: 81
+        }
+      };
+
+      defineMyPlugins = function() {
+        myPreloadPlugins = [
+          /**** my plugins ****/
+          RevealLoadCode, RevealFragmentOrder,
+        ];
+        myPlugins = [
+          /**** built-in plugins ****/
+          /**** third-party plugins ****/
+          /**** my plugins ****/
+          RevealCodeTips, RevealFragmentGroup,
+        ];
+      };
+    </script>
+    <script src="js/common.js"></script>
+  </body>
+</html>
